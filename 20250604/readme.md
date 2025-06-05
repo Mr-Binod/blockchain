@@ -30,3 +30,35 @@ emojial
 
 6. 백엔드 -> restfull API 작성법 (방법론) (nodejs 이벤트 루프) 기초 지식 + 객체지향 사고방식 (class => this) -> 의존성 주밉 IOC VO DTO DAO -> 클래스로 EXPRESS -> 
 NEST (개념 먼저 공부)(공식문서) -> NEST
+
+의존성 주입 제어 역정
+
+
+
+Step	Goal
+1. RESTful API	Learn API design principles
+2. Node.js	Master async programming and the event loop
+3. OOP	Use classes and structure your code
+- encapsulation : binding class and function in as one 
+- abstraction : visible only the method or variables which can be accessed from outside 
+```js
+function Circle(radius) {
+    this.radius = radius;
+    let count = 1
+    let increment = (factor) => {
+        const result = factor + 1
+    }
+    this.draw = () => {
+        const new_result = increment(1)
+        return new_result b
+    }
+}
+
+const circle = new circle(10)
+circle.draw()
+```
+ inheritance and polymorphism
+ 
+4. Architecture	Understand DI, IoC, DTO, DAO, VO
+5. Express	Apply your knowledge in a lightweight framework
+6. NestJS	Use a powerful framework for production apps
