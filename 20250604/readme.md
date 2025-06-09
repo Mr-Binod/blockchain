@@ -59,6 +59,7 @@ circle.draw()
 ```
  inheritance and polymorphism
  
-4. Architecture	Understand DI, IoC, DTO, DAO, VO
+4. Architecture	Understand DI, IOC, DTO, DAO, VO
 5. Express	Apply your knowledge in a lightweight framework
 6. NestJS	Use a powerful framework for production apps
+7. TypeORM

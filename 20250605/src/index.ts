@@ -21,7 +21,6 @@ const add = (count : number) => {
 console.log(message);
 
 
-
 let isActive : boolean = false;
 let hash : string = "0asdl0";  // 진수는 숫자형 데이터가 맞다 . 
 // 하지만 우리가 사용할때 문자열로 사용한다
@@ -48,7 +47,6 @@ if(typeof initValue4 === "number") {
     initValue4 = 1;
     console.log(initValue)
 }
-
 
 // 참조 타입
 
@@ -101,9 +99,9 @@ interface IBlock {
 //     }
 // }
 
-
 // let object : IBlock = {
 //     id : "123",
-
 // }
+
+
 
