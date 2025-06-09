@@ -62,6 +62,97 @@ console.log(formattedPrices)
 
 ```
 
+- DTO : Data transfer object is used to transfer data between different parts of an application
+
+- from client to server
+- controller to service
+- backend to frontend
+
+```js
+
+export class UserDTO {
+    constructor({ name, email, age }) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+}
+
+import { UserDTO } from './UserDTO.js';
+
+app.post('/users', (req, res) => {
+    const userDto = new UserDTO(req.body);
+    
+    // Pass only validated/structured data to the service
+    userService.createUser(userDto);
+    
+    res.status(201).send('User created');
+});
+
+```
+
+- DAO :  data access object is design pattern used to abstract and encapsulate all access to datasource (like database or files). it works as a bridge between application logic and your database
+
+```js
+// UserDAO.js
+import { db } from './db.js'; // a connected Mongo client
+
+export class UserDAO {
+    static async findById(id) {
+        return await db.collection('users').findOne({ _id: id });
+    }
+
+    static async create(user) {
+        return await db.collection('users').insertOne(user);
+    }
+
+    static async deleteByEmail(email) {
+        return await db.collection('users').deleteOne({ email });
+    }
+}
+
+import { UserDAO } from './UserDAO.js';
+
+export class UserService {
+    static async register(userDto) {
+        const existing = await UserDAO.findById(userDto.id);
+        if (existing) throw new Error('User already exists');
+        return await UserDAO.create(userDto);
+    }
+}
+
+```
+
+- VO : value object is a object which represents a value in yor domain
+with a value object we can identiy weather the object has a value we determined or not
+
+```js
+export class Money {
+    constructor(amount, currency) {
+        if (amount < 0) throw new Error('Amount must be positive');
+        this.amount = amount;
+        this.currency = currency;
+        Object.freeze(this);
+    }
+
+    equals(other) {
+        return other instanceof Money &&
+               this.amount === other.amount &&
+               this.currency === other.currency;
+    }
+
+    toString() {
+        return `${this.currency} ${this.amount.toFixed(2)}`;
+    }
+}
+
+const price = new Money(100, 'USD');
+console.log(price.toString()); // USD 100.00
+
+```
+
+
+
 5. Express	Apply your knowledge in a lightweight framework
 6. NestJS	Use a powerful framework for production apps
 7. TypeORM
