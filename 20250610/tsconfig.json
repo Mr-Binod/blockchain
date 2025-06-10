@@ -1,0 +1,27 @@
+{
+  // compiler folder path
+  // 경로 패턴
+  // /* : 모든 파일
+  // /** : 모든 폴더
+  // src 폴더에 모든 폴더와 파일  src/**/*
+  "include": [
+    "src/**/*"
+  ],
+  // test code 작성하고 단일 테스트 등등 진행할 파일등 
+  // 컴파일할때 불필요한 파일들
+  // explain.test.ts
+  // 모든 폴더 안에 모든 파일 이름은 * 번부 .test.ts
+  "exclude": [
+    "**/*.test.ts"
+  ],
+  // compiler 사용 속성 정의
+  "compilerOptions": {
+    "target": "es6",
+    "outDir": "./dist",
+    "removeComments": true,
+     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+  }
+}
+
+ 
