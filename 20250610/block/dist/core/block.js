@@ -34,12 +34,13 @@ class Block {
             generateBlock.nonce = nonce;
             hash = Block.createBlockHash(generateBlock);
             const binary = Block.hashToBinary(hash);
+            console.log("0".repeat(generateBlock.difficulty), '22');
             const result = binary.startsWith("0".repeat(generateBlock.difficulty));
+            console.log('mining', nonce++, binary, '22', result);
             if (result) {
                 generateBlock.hash = hash;
                 return generateBlock;
             }
-            console.log('mining', nonce++);
         }
     }
     static hashToBinary(hash) {
@@ -80,7 +81,7 @@ const Genesis = {
     hash: "0".repeat(64),
     previousHash: "0".repeat(64),
     merkleRoot: "0".repeat(64),
-    difficulty: 0,
+    difficulty: 100,
     nonce: 0,
     data: ["미국 경제 위기 뉴옥 타임즈 2008 블룸버그"]
 };

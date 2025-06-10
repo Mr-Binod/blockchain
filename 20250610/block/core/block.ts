@@ -61,14 +61,15 @@ class Block implements IBlock {
             const binary = Block.hashToBinary(hash)
             // repeat 문자열을 반복 시켜서 문자열을 반환
             // "0" 을 difficulty 만큼 반복된 문자열을 만들어준다 "0000"
+            console.log("0".repeat(generateBlock.difficulty),'22' )
             const result: boolean = binary.startsWith("0".repeat(generateBlock.difficulty))
+            console.log('mining', nonce++, binary,'22', result)
             if (result) {
                 // 전답을 맞췄다
                 // 블록을 추가할 권한을 얻은것
                 generateBlock.hash = hash;
                 return generateBlock;
             }
-            console.log('mining', nonce++)
         }
     }
     static hashToBinary(hash: string) {
@@ -127,7 +128,7 @@ const Genesis: IBlock = {
     hash: "0".repeat(64),
     previousHash: "0".repeat(64),
     merkleRoot: "0".repeat(64),
-    difficulty: 0,
+    difficulty: 100,
     nonce: 0,
     data: ["미국 경제 위기 뉴옥 타임즈 2008 블룸버그"]
 }
