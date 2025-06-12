@@ -1,6 +1,11 @@
 Step	Goal
 1. RESTful API	Learn API design principles
 - restful api is application programming interface is a set of rule that allows one piece of software or system to interact with another 
+* get
+* post
+* put
+* delete
+
 2. Node.js	Master async programming and the event loop
 3. OOP	Use classes and structure your code
 - encapsulation : binding class and function in as one 

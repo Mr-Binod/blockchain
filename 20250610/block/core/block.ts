@@ -22,7 +22,7 @@ class Block implements IBlock {
         this.merkleRoot = Block.getMerkleRoot<string>(data);
         this.height = _previousBlock.height + 1;
         this.nonce = 0; // 블록의 연산 횟수
-        this.difficulty = 100;
+        this.difficulty = 10;
         this.hash = Block.createBlockHash(this);
         this.data = data;
     }
@@ -89,9 +89,11 @@ class Block implements IBlock {
             // dec.toString(2) 이진수 문자열로 변환
             // padStart 고정문 문자열 길이를 가지고 남은 부분은 start메서드는 앞부분부터 채워준다
             const binaryByte = dec.toString(2).padStart(8, "0")
-
+            
             binary += binaryByte;
+            console.log(hexByte, dec, binaryByte, 'zz')
         }
+        console.log(binary, ' binary')
         return binary;
     }
 
@@ -128,7 +130,7 @@ const Genesis: IBlock = {
     hash: "0".repeat(64),
     previousHash: "0".repeat(64),
     merkleRoot: "0".repeat(64),
-    difficulty: 100,
+    difficulty: 0,
     nonce: 0,
     data: ["미국 경제 위기 뉴옥 타임즈 2008 블룸버그"]
 }

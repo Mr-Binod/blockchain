@@ -13,7 +13,7 @@ class Block {
         this.merkleRoot = Block.getMerkleRoot(data);
         this.height = _previousBlock.height + 1;
         this.nonce = 0;
-        this.difficulty = 100;
+        this.difficulty = 10;
         this.hash = Block.createBlockHash(this);
         this.data = data;
     }
@@ -52,7 +52,9 @@ class Block {
             const dec = parseInt(hexByte);
             const binaryByte = dec.toString(2).padStart(8, "0");
             binary += binaryByte;
+            console.log(hexByte, dec, binaryByte, 'zz');
         }
+        console.log(binary, ' binary');
         return binary;
     }
     static isValidNewBlock(previousBlock, newBlock) {
@@ -81,7 +83,7 @@ const Genesis = {
     hash: "0".repeat(64),
     previousHash: "0".repeat(64),
     merkleRoot: "0".repeat(64),
-    difficulty: 100,
+    difficulty: 0,
     nonce: 0,
     data: ["미국 경제 위기 뉴옥 타임즈 2008 블룸버그"]
 };
