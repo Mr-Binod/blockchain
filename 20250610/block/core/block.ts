@@ -136,23 +136,18 @@ const data = ["tx01", "tx02"]
 const data2 = ["tx02", "tx03"]
 newBlock = Block.generateBlock(Genesis, data)
 
-
 if (newBlock) {
     newBlock2 = Block.generateBlock(newBlock, data2)
 }
 console.log(newBlock, 'newblock')
 console.log(newBlock2, 'newblock2')
 
-
 const isValidBlock = Block.isValidNewBlock(Genesis, newBlock);
 if (isValidBlock?.isError) {
     console.log("검증 에러", isValidBlock)
 }
 
-
 export default Block;
-
-
 
 // npx tsc
 // node dist/core/block.js
