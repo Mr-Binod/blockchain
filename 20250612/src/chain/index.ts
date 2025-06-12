@@ -6,13 +6,11 @@ export class BlockChain implements IChain {
     chain: Block[]; // 블록의 배열의 형태 (체인)
     blockGenerateInterval: number; // 목표 시간
     blockAdjustmentInterval: number; // 난이도 조절 주기
-
     constructor() {
         this.chain = [this.createGenesisBlock()]; // 최조의 블록 즉 제네시스
         this.blockGenerateInterval = 600; 
         this.blockAdjustmentInterval = 10; // 10블록마다 난이도 조절
     }
-
     createGenesisBlock () : Block {
         return new Block(
             Genesis.version,
@@ -23,7 +21,6 @@ export class BlockChain implements IChain {
             Genesis.data
         )
     }
-
     // 체인에서 가장 마지막 블록 반환
     // 내가 마이닝할때 
     // 내가 체인에 블록을 추가하기위해서 이전블록은 체인에 가장 마지막 블록
@@ -32,7 +29,6 @@ export class BlockChain implements IChain {
         // returning the last block in chain array
         return this.chain[this.chain.length - 1]
     }
-
     // 새로운 블록을 체인에 저장
     addBlock(data : string[]) : Block | null {
         const previousBlock = this.getLatestBlock();
@@ -46,7 +42,6 @@ export class BlockChain implements IChain {
             1000000000,
             data
         )
-
         // 마이닝해서 
         newBlock.mine();
         // 블록 유효성 검사
@@ -59,7 +54,6 @@ export class BlockChain implements IChain {
             return null;
         }
     }
-
     // 난이도 저정
     // 최근 블록 생성 시간과 목표 생성시간을 비교해서 난이도를 변경
     adjustDifficulty() : number {
@@ -84,7 +78,6 @@ export class BlockChain implements IChain {
             return prevAdjustmentBlock.difficulty
         }
     }
-
     // 체인의 유효성 검사
     static isValidChain (chain : Block[]) : boolean {
         for (let i = 0; i < chain.length; i++) {
@@ -94,10 +87,11 @@ export class BlockChain implements IChain {
         }
         return true
     }
-
     replaceChain (newChain : Block[]) : boolean {
-        const isValid = BlockChain.isValidChain(newChain); // 유효한 검증
-        const isLong = newChain.length > this.chain.length; // 길이가 더 긴 체인인지 검증
+        const isValid = BlockChain.isValidChain(newChain); 
+        // 유효한 검증
+        const isLong = newChain.length > this.chain.length; 
+        // 길이가 더 긴 체인인지 검증
         if(isValid && isLong) {
             this.chain = newChain;
             return true;
@@ -105,8 +99,6 @@ export class BlockChain implements IChain {
             // 내 체인 교체 X
             return false;
         }
-        
     }
-
 }
 
