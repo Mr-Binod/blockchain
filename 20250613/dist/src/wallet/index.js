@@ -1,167 +1,87 @@
-import { randomBytes } from "crypto";
-import { IWallet } from "../interface/wallet.interface";
-import elliptic from "elliptic"
-import { SHA256 } from "crypto-js";
-import path from "path";
-import fs from "fs"
-
-const dir = path.join(__dirname, "./data");
-
-if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Wallet = void 0;
+const crypto_1 = require("crypto");
+const elliptic_1 = __importDefault(require("elliptic"));
+const crypto_js_1 = require("crypto-js");
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+const dir = path_1.default.join(__dirname, "./data");
+if (!fs_1.default.existsSync(dir)) {
+    fs_1.default.mkdirSync(dir, { recursive: true });
 }
-
 // 타원 곡선 알고리즘 이름
 // 타원 곡선의 형태를 정의하는 객체를 받고
-const ec = new elliptic.ec("secp256k1");
-
-export class Wallet implements IWallet {
-    account: string; // 공개키를 잘라서 만든 지갑 주소
-    privateKey: string; // 개인키 랜덤한 정수 엄청 큰수 정수 
-    publicKey: string; // 공개키
-    balance: number; // 지갑에 표현할 잔액 UTXO에서 가져온다.
-
+const ec = new elliptic_1.default.ec("secp256k1");
+class Wallet {
     // 랜덤 정수
     // 개인키
     // 지갑을 생성 했었으면 개인키를 가지고 있다.(노출되면 안된다.)
     // 지갑의 개인키를 가지고 있다 라는것 만으로 내가 지갑을 소유하고 있다.
     // 이미 지갑을 만든적이 있다 => 개인키 생성한적이 있다 즉 랜덤하게 생성한 값을 소유하고 있다.
-    constructor(privateKey: string = "") {
+    constructor(privateKey = "") {
         // 개인키 개인키가 있으면 사용하고 없으면 새로 생성
         this.privateKey = privateKey || this.setPrivateKey();
-
         // 개인키로 공개키를 생성
         this.publicKey = this.setPublickey();
-
         // 공개키의 문자열의 일부분을 잘라서 사용한 것이 지갑 주소
         this.account = this.setAccount();
-
         // 잔액
         this.balance = 0;
-
         // 새로 생성한 지갑은 지갑 파일 저장
         if (privateKey === "") {
             Wallet.createWallet(this);
         }
     }
-
-    static createWallet(wallet: Wallet) {
-        const filepath = path.join(dir, wallet.account); // 확장자 txt
+    static createWallet(wallet) {
+        const filepath = path_1.default.join(dir, wallet.account); // 확장자 txt
         // data/waller.account.txt
-        fs.writeFileSync(filepath, wallet.privateKey);
+        fs_1.default.writeFileSync(filepath, wallet.privateKey);
     }
-
-    static getWalletList(): string[] {
-        const walletFiles: string[] = fs.readdirSync(dir);
-        console.log(walletFiles,'FILES')
+    static getWalletList() {
+        const walletFiles = fs_1.default.readdirSync(dir);
         return walletFiles;
     }
-
-    static getWalletPrivateKey(account: string): string {
-        const filepath = path.join(dir, account);
-        const content = fs.readFileSync(filepath, "utf-8");
-        return content
+    static getWalletPrivateKey(account) {
+        const filepath = path_1.default.join(dir, account);
+        const content = fs_1.default.readFileSync(filepath, "utf-8");
+        return content;
     }
-
-    setPrivateKey(): string {
+    setPrivateKey() {
         // 랜덤한 32바이트의 개인키의 값을 만들고 
-        // 해시 문자열로 변환해서 반환 16 
-        return randomBytes(32).toString("hex");
+        // 해시 문자열로 변환해서 반환 16
+        return (0, crypto_1.randomBytes)(32).toString("hex");
     }
-
     // 공개키 생성
-    setPublickey(): string {
+    setPublickey() {
         // 반환값이 공개키의 내용
         // keyPair 는 공개키를 제공하는 메서드가 포함된 객체
         const keyPair = ec.keyFromPrivate(this.privateKey);
-        console.log(keyPair, 'ss')
-        console.log(ec, 'ss1')
-        // KeyPair {
-        //     ec: EC {
-        //         curve: ShortCurve {
-        //             type: 'short',
-        //                 p: [BN],
-        //                     red: [Red],
-        //                         zero: [BN],
-        //                             one: [BN],
-        //                                 two: [BN],
-        //                                     n: [BN],
-        //                                         g: [Point],
-        //                                             _wnafT1: [Array],
-        //                                                 _wnafT2: [Array],
-        //                                                     _wnafT3: [Array],
-        //                                                         _wnafT4: [Array],
-        //                                                             _bitLength: 256,
-        //                                                                 _maxwellTrick: true,
-        //                                                                     redN: [BN],
-        //                                                                         a: [BN],
-        //                                                                             b: [BN],
-        //                                                                                 tinv: [BN],
-        //                                                                                     zeroA: true,
-        //                                                                                         threeA: false,
-        //                                                                                             endo: [Object],
-        //                                                                                                 _endoWnafT1: [Array],
-        //                                                                                                     _endoWnafT2: [Array]
-        //         },
-        //         n: BN { negative: 0, words: [Array], length: 10, red: null },
-        //         nh: BN { negative: 0, words: [Array], length: 10, red: null },
-        //         g: Point {
-        //             curve: [ShortCurve],
-        //                 type: 'affine',
-        //                     precomputed: [Object],
-        //                         x: [BN],
-        //                             y: [BN],
-        //                                 inf: false
-        //         },
-        //         hash: [Function: SHA256] {
-        //             blockSize: 512,
-        //                 outSize: 256,
-        //                     hmacStrength: 192,
-        //                         padLength: 64
-        //         }
-        //     },
-        //     priv: BN {
-        //         negative: 0,
-        //             words: [
-        //                 14234475, 18164382,
-        //                 22771685, 53603432,
-        //                 30637179, 46713346,
-        //                 64801040, 26545539,
-        //                 34564514, 2727795,
-        //                 0
-        //             ],
-        //                 length: 10,
-        //                     red: null
-        //     },
-        //     pub: null
-        // }
         // 개인키로 생성한 공개키를 조회 인코딩해서 반환
         return keyPair.getPublic().encode("hex", true);
     }
-
     // 지갑의 주소는 앞자리의 문자열을 잘라서 40자리의 문자열을 만들어서 지갑의 주소로 사용한다
-    setAccount(): string {
+    setAccount() {
         // 66개의 문자열에서 40 앞부분이 26개를 잘라서 반환
         return this.publicKey.slice(26);
     }
-
     // 누군가가 한 일이 맞는지 검증 비대칭키 개인키 공개키 
     // A -> B 에게 보물상자을 전달했는데 A가 B에게 보물상자의 키를 전달 B는 이 보물상자를 열기위해서 이 키를 사용해야한다.
     // 보물상자 안에 들어있는 내용은 A가 보물상자를 줬다는 내용이 들어있다 그리고 보물
     // 트랜잭션의 내용 즉 메시지를 증명할수 있는 키가 공개키 공개키로 검증할수 있는 값이 서명값
     // 메시지를 하나 만들어서 서명에 사용을 해보자
-    static hashMessage(message: string): string {
-        return SHA256(message).toString();
+    static hashMessage(message) {
+        return (0, crypto_js_1.SHA256)(message).toString();
     }
-
     // 서명 생성
-    signMessage(message: string): string {
+    signMessage(message) {
         const hash = Wallet.hashMessage(message);
-
         // 키페어 객체를 가지고 서명을 생성
         // 타원 곡선의 형태와 기준점과 개인키 공개키
         const keyPair = ec.keyFromPrivate(this.privateKey);
-
         // 서명 생성
         // rsv
         // s 값을 짧게 작은 값으로 고정 표준 서명의 값
@@ -183,11 +103,9 @@ export class Wallet implements IWallet {
         // 전달해주는 매개변수의 값 v 비유를해서 쉽게 보조의 값 공개키로 복원할때 사용되는 보조의 정보
         // 실제 서명값은 r s
         // z 메시지 내용 메시지도 서명에 포함되는 이유
-
         //keyPair 타원곡선의 형태 개인키 공개키 기준점
-
         /*
-            Signature {     
+            Signature {
                 r: BN {       bigint 큰 정수를 표현하기 위해서
                     negative: 0, // 양수
                     words: [ 32바이트로 정수를 쪼개서 배열의 형태로 나타낸것.
@@ -218,20 +136,15 @@ export class Wallet implements IWallet {
                 recoveryParam: 0
                 }
         */
-
-
         // 서명을 인코딩해서 16진수 문자열로 변환해서 반환.
         return signature.toDER("hex");
     }
-
     // 서명 검증
-    static verifySignature(message: string, signature: string, publicKey: string): boolean {
+    static verifySignature(message, signature, publicKey) {
         const hash = Wallet.hashMessage(message);
-
         // 공개키를 가지고 있는 객체를 생성
         // 검증 메서드를 호출할수 있다 서명 검증
         const key = ec.keyFromPublic(publicKey, "hex");
-
         // verify 
         // 해시문자열 => 메시지를 해시화한 문자열
         // hash => 내용이 어떤 일
@@ -239,10 +152,8 @@ export class Wallet implements IWallet {
         return key.verify(hash, signature); // => signature(영수증에 기록된 서명이 올바른지 확인)
     }
 }
-
-const wallet = new Wallet();
-
-const signature = wallet.signMessage("안녕");
-
-console.log(Wallet.verifySignature("안녕", signature, wallet.publicKey));
-console.log(Wallet.verifySignature("안녕2", signature, wallet.publicKey));
+exports.Wallet = Wallet;
+const wellet = new Wallet();
+const signature = wellet.signMessage("안녕");
+console.log(Wallet.verifySignature("안녕", signature, wellet.publicKey));
+console.log(Wallet.verifySignature("안녕2", signature, wellet.publicKey));
