@@ -1,0 +1,20 @@
+"use strict";
+// bigint 로 bigint로 형변환 
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Version = exports.Genesis = exports.max_target = void 0;
+// 1 의 기준으로 최댓값
+exports.max_target = BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+// Genesis block
+exports.Genesis = {
+    version: "1.0",
+    height: 0,
+    timestamp: 1231006505000, // 2009.01.03 18 : 15 : 05 UTC
+    previousHash: "0".repeat(64),
+    merkleRoot: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+    nonce: 2083236893,
+    difficulty: 1,
+    hash: "0000000000000000000191356ba4f5e0ec05e3590131f18e3ef2d505addccce5",
+    data: ["The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"]
+};
+// version details
+exports.Version = "1.0";
