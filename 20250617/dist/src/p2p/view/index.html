@@ -76,7 +76,7 @@
 
         const toAddress = txAddress.value.trim();
         const Amount = parseInt(amount.value);
-
+        console.log(Amount,'amount')
         const {data} = await axios.post("/transaction", {
             toAddress, 
             Amount

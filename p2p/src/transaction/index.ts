@@ -38,7 +38,6 @@ export class Transaction implements ITransaction {
         return this.inputs.every((input) => {
             // 둘중에 하나라도 없으면
             if(!(input.signature && input.publicKey)) return false;
-
             try {
               return Wallet.verifySignature(
                 this.id,

@@ -30,7 +30,7 @@ export class UTXOLedger implements IUTXOLedger {
                 amount: output.amount
             })
         })
-    }
+    }  
 
     // 특정 주소가 가지고 있는 UTXO 반환
     // 즉 지갑의 잔액 조회
