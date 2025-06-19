@@ -19,7 +19,7 @@
             <label for="">받는 지갑 주소</label><br>
             <input type="text" id="txAddress" size="60" required> <br>
             <label for="">보낼 금액</label><br>
-            <input type="number" id="amount" min="0" required><br>
+            <input type="number" id="amountValue" min="0" required><br>
             <button>트랜잭션 전송</button>
         </form>
         <div id="txResult"></div>
@@ -75,7 +75,7 @@
         updateTxResult("");
 
         const toAddress = txAddress.value.trim();
-        const Amount = parseInt(amount.value);
+        const Amount = parseInt(amountValue.value);
 
         const {data} = await axios.post("/transaction", {
             toAddress, 

@@ -129,7 +129,7 @@ export class UserService {
 
 ```
 
-- VO : value object is a object which represents a value in yor domain
+- VO : value object is a object which represents a value in your domain
 with a value object we can identiy weather the object has a value we determined or not
 
 ```js
