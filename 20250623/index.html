@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.16.0/dist/web3.min.js"></script>
+</head>
+
+<body>
+    <div>지갑 : <span id="ethAccount"></span></div>
+
+    <label for="">트랜잭션 할 계정</label><br>
+    <input type="text" id="accAddress"><br>
+    <label for="">contract 배포할 바이트 코드</label><br>
+    <input type="text" id="byteCode"><br>
+    <button id="sendTransaction">배포하기</button>
+
+    <div>카운트의 값 : <span id="countValue"></span></div>
+    <button onclick="setValue('increment')">증가</button>
+    <button onclick="setValue('decrement')">감소</button>
+</body>
+<script>
+    // 확장 프로그램과 커낵션
+    // ethereum 사용하는 이더계열 지갑이 들어있는 키값
+    // web3 생성자로 전달된 지갑의 커넥션을 생성
+    const web3 = new Web3(window.ethereum);
+    // 지갑 연결 요청
+    // 원격 프로시저 호출의 형태로 요청
+    // 프로토콜 eth_requestAccounts
+    window.ethereum.request({ method: "eth_requestAccounts" })
+    // 지갑 정보 알려줘 요청을 메타마스크로 보내기
+    // 계정들 조회
+    const getAccount = async () => {
+        const accounts = await web3.eth.getAccounts()
+        console.log(accounts)
+        // 내가 사용중인 계정은 배열의 첫번째
+        // 0번 계정을 조회하면
+        accounts.forEach(async (el, index) => {
+            const balance = await web3.eth.getBalance(el);
+            // 지갑의 잔액을 wei 암호화자의 이름에서 가져와서
+            // 소수점
+            // 수수료 계산을 할때 
+            console.log(balance)
+            const eth_balance = await web3.utils.fromWei(balance, "ether")
+            // 이더 단위로 표현
+            console.log(eth_balance)
+            if (index === 0) {
+                ethAccount.innerHTML += `${el} 잔액 : ${eth_balance}ETH`
+            }
+        })
+        return accounts[0]
+    }
+    getAccount();
+    // web3.eth.getAccounts().then((accounts) => {
+    // })
+
+    // 식별자(identifier) 어떤 네트워크를 사용하는지 ChainId
+    // 메타마스크에 wallet_switchEthereumChain 함수 호출 요쳥
+    const switchChainId = () => {
+        // chainId 네트워크 사이트 네트워크의 아이디로제공하는 노드들
+        // 123 => 해시화 시켜서 사용
+        window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "" }] })
+
+    }
+    switchChainId("0xaa36a7")
+    // websocket 사용해서 메타마스크의 이벤트를 구독
+    // 메타마스크 확장프로그램에서 이벤트가 발생할때 호출할 함수내용을 콜백을 전달
+    // chainChanged 메타마스크 내부에서 호출된다. 네트워크 변환이 이러나면 실행되는 이벤트
+    window.ethereum.on("chainChanged", (chainId) => {
+        console.log("네트워크 변경됨 : " + chainId)
+        if (chainID === "0xaa36a7") {
+            console.log("내 플레숨")
+        }
+        else {
+            alert("세풀리아 네트워크에서 사용할수 있는 플랫품")
+            switchChainId("0xaa36a7")
+        }
+    })
+    // abi application binary interface : EVM 의 실행할 메서드의 내용을 가지고 있고 우리가 함수 호출 요청보낼때 힟요한 인터페이시 값
+    const abi = [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "inputs": [],
+            "name": "getValue",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "_value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setValue",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ]
+    sendTransaction.onclick = async () => {
+        // sendTransaction 트랜잭셩 메시지 작성 개인키로 서명하고 트랜잭션 발생
+        const tx = await web3.eth.sendTransaction({
+            from: accAddress.value,
+            gas: "3000000",
+            data: "0x" + byteCode.value
+        })
+        // 0x9af1484789efb24f1e488b1de775bd646b9379b1
+        console.log(tx)
+        /*
+{blockHash: '0x36c40c73b7f9d6f4f9f68d9ff268c69f0123acf8b00fe872e676b1a3ed6ebbff', blockNumber: 8609400n, contractAddress: '0x9af1484789efb24f1e488b1de775bd646b9379b1', cumulativeGasUsed: 212399n, effectiveGasPrice: 2500069290n, …}
+blockHash
+: 
+"0x36c40c73b7f9d6f4f9f68d9ff268c69f0123acf8b00fe872e676b1a3ed6ebbff"
+blockNumber
+: 
+8609400n
+contractAddress
+: 
+"0x9af1484789efb24f1e488b1de775bd646b9379b1"
+cumulativeGasUsed
+: 
+212399n
+effectiveGasPrice
+: 
+2500069290n
+from
+: 
+"0xd093954425a10f2dec1dca52eca245b72288a3cd"
+gasUsed
+: 
+149399n
+logs
+: 
+[]
+logsBloom
+: 
+"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+status
+: 
+1n
+transactionHash
+: 
+"0xfedf820d88984550369728b0af5be8015cc482a8d73ebd619048f9287b36971a"
+transactionIndex
+: 
+3n
+type
+: 
+2n
+[[Prototype]]
+: 
+Object
+        */
+    }
+
+    // 
+
+    // 카운트 컨트랙트 조회
+    // 0x9af1484789efb24f1e488b1de775bd646b9379b1
+    //    
+    const getValue = async () => {
+
+        // encodeFunctionCall : abi를 해시화 시키는 메서드
+        const getCodeHash = await web3.eth.abi.encodeFunctionCall(abi[1], [])
+        console.log(getCodeHash)
+        // 0x20965255
+        // call and send 
+        // send 는 가스비가 발생하는 함수들
+        // call 조회하는 메서드 가스비가 발생하지 않는 메서드
+        // call은 가스비를 지불할 사람이 없기때문에
+        const message = await web3.eth.call({
+            to : "0x9af1484789efb24f1e488b1de775bd646b9379b1",
+            data : getCodeHash
+        })
+        console.log(message, "message")
+        // bigint를 숫자로 변환해서 사용해야한다
+        // 단위를 변환해서 사용하는 작업이 많다
+        // 해시 bigint 로 변환하고 그다음 10 진수 문자열로 변환
+        console.log(web3.utils)
+        const result = await web3.utils.toBigInt(message).toString(10);
+        console.log("카운트 값은 : " + result)
+        countValue.innerHTML = result
+        return result
+    }
+    getValue();
+
+    const setValue = async (type) => {
+        const value = parseInt(await getValue());
+        if(type === "increment") {
+              const getCodeHash = await web3.eth.abi.encodeFunctionCall(abi[2], [value + 1])
+              const tx = {
+                from : await getAccount(),
+                to : "0x9af1484789efb24f1e488b1de775bd646b9379b1",
+                data : getCodeHash,
+                gas : "3000000",
+                gasPrice : "2100000000"
+              }
+              web3.eth.sendTransaction(tx)
+        }else {
+            if(value === 0) return
+            const getCodeHash = await web3.eth.abi.encodeFunctionCall(abi[2], [value - 1])
+             const tx = {
+                from : await getAccount(),
+                to : "0x9af1484789efb24f1e488b1de775bd646b9379b1",
+                data : getCodeHash,
+                gas : "3000000",
+                gasPrice : "2100000000"
+              }
+              web3.eth.sendTransaction(tx)
+        }
+    }
+    // setValue("increment")
+</script>
+</html>
