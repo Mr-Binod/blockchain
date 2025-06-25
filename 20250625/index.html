@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.16.0/dist/web3.min.js"></script>
+    <style>
+        #owner {
+            display: none;
+        }
+
+        #owner.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div>Bing Bank</div>
+    <div id="owner">관리자 입니다
+        <label for="">계정</label> <br>
+        <input type="text" id="limitAccount" placeholder="출금 제한을 할 계정을 입력하게요"><br>
+        <label for="">한도</label><br>
+        <input type="number" id="limitAmount" placeholder="최소 0.001" step="0.001"><br>
+        <button id="limitBtn">설정하기</button>
+    </div>
+    <div>입금
+        <label for="">입금할 금액 ETH</label><br>
+        <input type="number" placeholder="최소 0.001" step="0.001" id="deposite"><br>
+        <button id="depositeBtn">입금</button>
+    </div>
+    <div>출금
+        <label for="">출금할 금액 ETH</label><br>
+        <input type="number" placeholder="최소 0.001" step="0.001" id="withdrawl"><br>
+        <button id="withdrawlBtn">출금</button>
+        <div>내 출금 가능한도 : <span id="Limit"></span></div>
+    </div>
+    <div>내 입금된 내 잔액
+        <span>잔액 : <span id="myBalance"></span></span>
+    </div>
+    <div></div>
+</body>
+<script>
+    const CA = "0xa49c30b9fc55a4fb1f70ecc08038af0276c87da7";
+    const abi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [], "name": "deposite", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "getBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getContractBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getLimit", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "setLimit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdrawl", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
+    // 라이브러리들이 인스턴스 객체 생성
+    let web3;
+    let contract; // abi를 가지고 컨트랙트 트랜잭션 호출의 메서드를 가지고 있는 인스턴스
+    let accounts;
+    let Owner;
+
+    const init = async () => {
+        if (window.ethereum) {
+            await window.ethereum.request({ method: "eth_requestAccounts" })
+            web3 = new Web3(window.ethereum);
+            // 여러개의 계정들
+            // 허용된 계정
+            accounts = await web3.eth.getAccounts();
+            console.log(accounts);
+            // 컨트랙트 인스턴스 생성
+            contract = new web3.eth.Contract(abi, CA);
+            Owner = await contract.methods.owner().call()
+            console.log(Owner)
+            console.log(contract.methods)
+
+            // 컨트랙트의 주인 지금은 배포가 되어서 하는데 이렇게하면 안된다
+            if (Owner === accounts[0]) {
+                owner.classList.add("active")
+            }
+        }
+    }
+    // init()
+
+    // 입금 함수
+    const depositeFn = async () => {
+        const value = deposite.value;
+        if (value <= 0) {
+            alert("입금 금액을 확인하세요 최소 금액 0.001 ETH");
+            return;
+        }
+        // 가스비를 내고 상태변수 업데이트
+        await contract.methods.deposite().send({
+            from: accounts[0],
+            value: web3.utils.toWei(value, "ether") // ETH -> wei    from는 we -> ether
+        })
+        alert("입금 성공")
+    }
+
+
+    // 입금한 금액을 보여주는 함수
+    const reload = async () => {
+        const value = await contract.methods.getBalance().call({
+            from: accounts[0]
+        });
+        const _limit = await contract.methods.getLimit().call({
+            from: accounts[0]
+        });
+        const eth = web3.utils.fromWei(value, "ether") // ETH 단위로 변경
+        console.log(_limit, "value", value)
+        myBalance.innerHTML = eth + "ETH";
+
+        const ethlimit = web3.utils.fromWei(_limit, "ether")
+        Limit.innerHTML = ethlimit + "ETH";
+    }
+
+    const start = async () => {
+        await init()
+        await reload()
+        depositeBtn.onclick = depositeFn;
+        limitBtn.onclick = setLimit;
+        withdrawlBtn.onclick = withdrawlFn;
+    }
+    start()
+
+    // 관리자 출금 제한 설정
+    const setLimit = async () => {
+        const Acc = limitAccount.value;
+        const Amt = limitAmount.value;
+
+        // 잘못된 계정의 값
+        // 상태변수의 잘못된값이 들어가지 않게 방지 
+        // ifweb3.utils.isAddress() ===> 자깁    주소의 형태가 맞는지
+        if(!web3.utils.isAddress(Acc)) {
+            alert("지갑 주소를 확인하세요")
+            return;
+        }
+        // 단위 변경 이더를 wei 단위로
+        const wei = web3.utils.toWei(Amt, "ether");
+        // contract.methods.setLimit() 해시값 만드는것 함수명이랑 매개변수 내용이 필요하다
+        await contract.methods.setLimit(Acc, wei).send({
+            from: accounts[0]
+        })
+        alert("출금 한도 설정 완료")
+    }
+
+    // 출금 함수
+    const withdrawlFn = async () => {
+        const value = withdrawl.value;
+        if(value <= 0) {
+            alert("출금 최소 금액은 0.001 ETH")
+            return
+        }
+        const wei = web3.utils.toWei(value, "ether");
+        await contract.methods.withdrawl(wei).send({
+            from : accounts[0]
+        })
+        alert("출금 완료")
+        reload()
+    }
+</script>
+
+</html>
