@@ -40,12 +40,14 @@
     <div>내 입금된 내 잔액
         <span>잔액 : <span id="myBalance"></span></span>
     </div>
-    <div></div>
+    <div>
+        거래 이력 <br>
+        <span id="logs"></span>
+    </div>
 </body>
 <script>
-    const CA = "0xa49c30b9fc55a4fb1f70ecc08038af0276c87da7";
-    const abi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [], "name": "deposite", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "getBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getContractBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getLimit", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "setLimit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdrawl", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
-    // 라이브러리들이 인스턴스 객체 생성
+    const CA = "0xd2b0b18fc7d81674ac4444111d50ae6d8f091e78";
+    const abi = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "account", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "DepositeEn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "account", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "Limit", "type": "uint256" }], "name": "SetLimitEn", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "account", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "WithdrawlEn", "type": "event" }, { "inputs": [], "name": "deposite", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "getBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getContractBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getLimit", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "setLimit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdrawl", "outputs": [], "stateMutability": "nonpayable", "type": "function" }]
     let web3;
     let contract; // abi를 가지고 컨트랙트 트랜잭션 호출의 메서드를 가지고 있는 인스턴스
     let accounts;
@@ -108,6 +110,7 @@
     const start = async () => {
         await init()
         await reload()
+        await reloadEvents()
         depositeBtn.onclick = depositeFn;
         limitBtn.onclick = setLimit;
         withdrawlBtn.onclick = withdrawlFn;
@@ -122,7 +125,7 @@
         // 잘못된 계정의 값
         // 상태변수의 잘못된값이 들어가지 않게 방지 
         // ifweb3.utils.isAddress() ===> 자깁    주소의 형태가 맞는지
-        if(!web3.utils.isAddress(Acc)) {
+        if (!web3.utils.isAddress(Acc)) {
             alert("지갑 주소를 확인하세요")
             return;
         }
@@ -138,17 +141,64 @@
     // 출금 함수
     const withdrawlFn = async () => {
         const value = withdrawl.value;
-        if(value <= 0) {
+        if (value <= 0) {
             alert("출금 최소 금액은 0.001 ETH")
             return
         }
         const wei = web3.utils.toWei(value, "ether");
         await contract.methods.withdrawl(wei).send({
-            from : accounts[0]
+            from: accounts[0]
         })
         alert("출금 완료")
         reload()
     }
-</script>
 
+    // 이벤트 로그 조회함수
+    const reloadEvents = async () => {
+        const depositeEventLogs = await contract.getPastEvents("DepositeEn", {
+            fromBlock: 0,
+            toBlock: "latest"
+        })
+        console.log(depositeEventLogs)
+        const withdrawlEventLogs = await contract.getPastEvents("WithdrawlEn", {
+            fromBlock: 0,
+            toBlock: "latest"
+        })
+        const limitEventLogs = await contract.getPastEvents("SetLimitEn", {
+            fromBlock: 0,
+            toBlock: "latest"
+        })
+
+        // 나열 
+        // 모든 이베트를 한번 합쳐서 이벤트를 나열
+        // 블록 넘버로 
+        const allLogs = [...depositeEventLogs, ...withdrawlEventLogs, ...limitEventLogs]
+        console.log(allLogs)
+
+        // 정렬
+        // callback 반복 호출 10, 9 
+        allLogs.sort((a, b) => parseInt(a.blockNumber) - parseInt(b.blockNumber))
+
+        console.log(allLogs, "sort")
+
+        logs.innerHTML = "";
+        allLogs.forEach((log) => {
+            const div = document.createElement("div")
+            if (log.event === "DepositeFn") {
+                const amount = web3.utils.fromWei(log.returnsValues.amount, "ether")
+                div.innerHTML = `입금한 이력 : ${log.returnsValues.accounts} 입금자 ${amount} ETH`
+            }
+            else if (log.event === "WithdrawlFn") {
+                const amount = web3.utils.fromWei(log.returnsValues.amount, "ether")
+                div.innerHTML = `출금한 이력 : ${log.returnsValues.accounts} 출금자 ${amount} ETH`
+            }
+            else {
+                const Limit = web3.utils.fromWei(log.returnsValues.Limit, "ether")
+                div.innerHTML = `한도 설정 : ${log.returnsValues.accounts} 계정 ${Limit} ETH`
+
+             }
+             logs.append(div)
+        })
+    }
+</script>
 </html>
