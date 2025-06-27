@@ -18,3 +18,20 @@
 ```sh
 # compiler for abi and bin file
 npx solc --abi --bin contracts/Bank.sol
+npm init -y
+npm i @openzeppelin/contracts
+npm i web3 // in react
+```
+
+memory 
+const a = 3
+let b = a
+b = 5
+a = 3 , b = 5
+
+storage
+const a = {key : 4}
+let b = a
+b = {key : 9}
+
+a = {key : 9}

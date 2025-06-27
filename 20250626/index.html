@@ -56,11 +56,11 @@
     const init = async () => {
         if (window.ethereum) {
             await window.ethereum.request({ method: "eth_requestAccounts" })
-            web3 = new Web3(window.ethereum);
+            web3 = new Web3(window.ethereum.request(this));
             // 여러개의 계정들
             // 허용된 계정
             accounts = await web3.eth.getAccounts();
-            console.log(accounts);
+            console.log(accounts, web3,'web3');
             // 컨트랙트 인스턴스 생성
             contract = new web3.eth.Contract(abi, CA);
             Owner = await contract.methods.owner().call()
@@ -193,8 +193,8 @@
                 div.innerHTML = `출금한 이력 : ${log.returnsValues.accounts} 출금자 ${amount} ETH`
             }
             else {
-                const Limit = web3.utils.fromWei(log.returnsValues.Limit, "ether")
-                div.innerHTML = `한도 설정 : ${log.returnsValues.accounts} 계정 ${Limit} ETH`
+                const limit = web3.utils.fromWei(log.returnsValues.Limit, "ether")
+                div.innerHTML = `한도 설정 : ${log.returnsValues.accounts} 계정 ${limit} ETH`
 
              }
              logs.append(div)

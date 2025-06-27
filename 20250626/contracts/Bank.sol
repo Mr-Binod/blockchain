@@ -53,10 +53,11 @@ contract Bank {
 
     }
     // 관리자가 출금 한도를 설정
-    function setLimit(address account, uint amount) external {
-        balanceLimit[account] = amount; // 한번 출금할때 한도
-        emit SetLimitEn(account, amount);
+    function setLimit(address account, uint Limit) external {
+        balanceLimit[account] = Limit; // 한번 출금할때 한도
+        emit SetLimitEn(account, Limit);
     }
+
     // 본인의 잔액 조회 저금해놓은 잔액
     function getBalance() external view returns(uint) {
         return balances[msg.sender];  
