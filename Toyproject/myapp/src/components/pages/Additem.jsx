@@ -9,8 +9,8 @@ const Wrap = styled.div`
 
 `
 
-const Additem = () => {
-    const { contract, account, isNetwork, connectWallet } = useWallet();
+const Additem = ({ contract, account, isNetwork, connectWallet }) => {
+    // const { contract, account, isNetwork, connectWallet } = useWallet();
     const [items, setItems] = useState([])
 
     const navigate = useNavigate();

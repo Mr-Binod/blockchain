@@ -55,11 +55,11 @@ const Wrap = styled.div`
     }
 `
 
-const Mainpage = () => {
+const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
 
-    const { contract, account, isNetwork, connectWallet } = useWallet();
+
     const [allcoins, setAllcoins] = useState([]);
-    const [usercoins, setUsercoins] = useState([]);
+
     const [tokenamt, setTokenamt] = useState(null);
     const [usertoken, setUsertoken] = useState(null);
     const [events, setEvents] = useState([])
@@ -77,6 +77,19 @@ const Mainpage = () => {
 
     }
 
+    const BuyNFT = async (index) => {
+        if (!contract) {
+            alert("connect wallet")
+            return;
+        }
+        if (usertoken < events[index].price) {
+            alert("잔액이 부족합니다")
+            return;
+        }
+        console.log(index)
+        await contract.buyNFT(index)
+    }
+ 
     useEffect(() => {
         // console.log(contract, account, connectWallet)
         const eventLoad = async () => {
@@ -88,6 +101,15 @@ const Mainpage = () => {
                 price: args.price
             }))
             setEvents(eventDTO)
+            const Coins = await contract.getCoins();
+            const CoinsDTO = Coins.map((coin, index) => ({
+                id: index,
+                owner: coin.owner,
+                name: coin.name,
+                url: coin.url,
+                price: coin.price.toString(), // Convert BigInt (like 120n) to string
+            }));
+            setAllcoins(CoinsDTO)
 
             const usertoken = await contract?.getuserTokens();
             console.log(usertoken, 'token')
@@ -98,6 +120,9 @@ const Mainpage = () => {
     useEffect(() => {
         console.log(events)
     }, [events])
+    useEffect(() => {
+                 console.log(allcoins)
+    }, [allcoins])
     return (
         <Wrap>
             <button className='ConnectBtn' onClick={connectWallet}>Connect Wallet</button>
@@ -116,9 +141,14 @@ const Mainpage = () => {
 
                 <Link to="/upload"><button >상품 등록</button></Link>
             </div>
+            <div className='Additem'>
+                <h2>마이 페이지</h2>
+
+                <Link to="/mypage"><button >마이 페이지 이동</button></Link>
+            </div>
             <div className='items'>
                 <h2>구매 가능 상품</h2>
-                {events?.map((el) => (
+                {allcoins?.map((el, index) => (
                     <div className='item'>
                         <div className='imgsize'>
 
@@ -126,7 +156,7 @@ const Mainpage = () => {
                         </div>
                         <h3>상품 이름 : {el.name}</h3>
                         <span>가격 : {el.price}</span><br /><br />
-                        <button>상품 구매</button>
+                        <button onClick={() => BuyNFT(index)}>상품 구매</button>
                     </div>
                 ))}
             </div>
