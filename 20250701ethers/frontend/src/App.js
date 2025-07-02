@@ -3,7 +3,7 @@ import useWallet from "./hooks/useWallet";
 import styled from "styled-components"
 
 function App() {
-  const { contract, account, isNetwork, connectWallet, Mywallet } = useWallet();
+  const { contract, account, isNetwork, connectWallet} = useWallet();
   // 상태변수 정리
   // 디지몬 목록 내가 가지고 있는
   // 내가 뽑은 디지몬 보여줄 상태변수
@@ -51,11 +51,11 @@ function App() {
     setAlldigimons(digimons)
   }
 
-  const sendDigi = async () => {
-    const sendDogimon = await contract.sendDigi(
-      account,
-    )
-  }
+  // const sendDigi = async () => {
+  //   const sendDogimon = await contract.sendDigi(
+  //     account,
+  //   )
+  // }
 
   useEffect(() => {
     console.log(contract)
@@ -78,10 +78,17 @@ function App() {
     eventLoad()
   }, [contract])
 
+<<<<<<< HEAD
   // const Send = async () => {
   //   const tx = await sendDigi(receiver, 2)
   //   tx.wait()
   // }
+=======
+  const Send = async (receiver) => {
+    const tx = await contract.sendDigi(receiver, 2)
+    await tx.wait()
+  }
+>>>>>>> 88fc9b50dd97499d572b16afb5bac1cc39acfcaa
 
   // (() => {})();
 
@@ -111,7 +118,7 @@ function App() {
       {latestDigimon && (
         <div width="50px">
 
-          <DigimonCard {...latestDigimon} sendDigi={contract.sendDigi} />
+          <DigimonCard {...latestDigimon} Send={Send} />
         </div>
       )}
       <h2>디지몬 목록</h2>
@@ -133,16 +140,20 @@ function App() {
 }
 
 // props
-const DigimonCard = ({ url, name }, sendDigi) => {
+const DigimonCard = ({ url, name,Send }) => {
 
-  const [receiver, setReceiver] = useState("ALL");
+  const [receiver, setReceiver] = useState(null);
 
   return (
     <div>
       <img src={url} width="200px" />
       <div>{name}</div>
       <input onChange={(e) => setReceiver(e.target.value)} />
+<<<<<<< HEAD
       {/* <button onClick={Send()}>send</button> */}
+=======
+      <button onClick={() => Send(receiver)}>send</button>
+>>>>>>> 88fc9b50dd97499d572b16afb5bac1cc39acfcaa
     </div>
   )
 }

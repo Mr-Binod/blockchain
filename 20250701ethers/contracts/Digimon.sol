@@ -90,7 +90,11 @@ contract Digimon is ERC20 {
         userDigimons[to].push(userDigimons[msg.sender][index]);
         for (uint256 i = index; i < userDigimons[msg.sender].length - 1; i++) {
             userDigimons[msg.sender][i] = userDigimons[msg.sender][i + 1];
-            emit DigimonEvent(to, userDigimons[msg.sender][i].name, userDigimons[msg.sender][i].url);
+            emit DigimonEvent(
+                to,
+                userDigimons[msg.sender][i].name,
+                userDigimons[msg.sender][i].url
+            );
         }
         userDigimons[msg.sender].pop();
     }
