@@ -41,11 +41,11 @@ const useWallet = () => {
         setSigner(_signer);
         setAccount(_account);
         setContract(_contract);
+        console.log(_provider.getSigner, 'sdf')
     })
 
     useEffect(() => {
         if(!window.ethereum) return;
-
         const accChanged = (accounts) => {
             setAccount(accounts[0])}
         // 계정 변겅 이벤트
