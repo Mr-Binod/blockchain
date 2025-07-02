@@ -4,8 +4,9 @@ pragma solidity 0.8.30;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract CoinNFT is ERC20 {
-    uint private PRICE;
-    uint private tokensPerETH = 100_000;
+
+    mapping(address => uint) private balances;
+    uint private tokensPerETH = 100_000_000;
     struct CoinStruct {
         address owner;
         string name;
@@ -17,7 +18,13 @@ contract CoinNFT is ERC20 {
         string url;
     }
 
-    event NFTEvents(address owner, string name, uint price, string url, string trade);
+    event NFTEvents(
+        address owner,
+        string name,
+        uint price,
+        string url,
+        string trade
+    );
 
     CoinStruct[] private Coins;
 
@@ -28,6 +35,7 @@ contract CoinNFT is ERC20 {
     function buyToken(uint tokenamt) external payable {
         require(msg.value == (tokenamt / tokensPerETH));
         _mint(msg.sender, tokenamt * 10 ** decimals());
+        balances[msg.sender] += tokenamt; 
     }
 
     function sellNFT(
@@ -43,12 +51,15 @@ contract CoinNFT is ERC20 {
     function buyNFT(uint index) external {
         require(balanceOf(msg.sender) > Coins[index].price);
         string memory trade = "buy";
+        address prevOwner = Coins[index].owner;
         string storage name = Coins[index].name;
         string storage url = Coins[index].url;
         uint price = Coins[index].price;
         Coins[index] = Coins[Coins.length - 1];
         Coins.pop();
         userCoins[msg.sender].push(userCoin(name, url));
+        balances[msg.sender] -= price;
+        balances[prevOwner] += price;
         emit NFTEvents(msg.sender, name, price, url, trade);
     }
 
