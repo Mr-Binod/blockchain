@@ -1,0 +1,21 @@
+{
+    "input": [
+        {
+            "txId": "9a1bd90ac5687c14d606dc1f41e52022223714bfbd0fe1997e1466893c08e362",
+            "outputIndex": 0,
+            "publicKey": "031004204e905622c3b767b13963fc471718ce56a64895392f084ee1016559070a",
+            "signature": "304502210098694a8adc9acc028ee07c37a4c6e7631ee7dd5e8e67839e79987e4989e1b91902204bba80b279ac1c6760575f851463815b8fa7fc9d120cd539d2a2688233947976"
+        }
+    ],
+    "output": [
+        {
+            "address": "63fc471718ce56a64895392f084ee1016559070a",
+            "amount": 30
+        },
+        {
+            "address": "d5f4214b347b60e0ed48d348769c51ca376ef484",
+            "amount": 20
+        }
+    ],
+    "id": "de4a24a8ffb55cc18bef356216ebacaa1abed98b89c5088e220dd4c8fe066fcb"
+}

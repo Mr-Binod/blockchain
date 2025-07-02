@@ -35,3 +35,18 @@ let b = a
 b = {key : 9}
 
 a = {key : 9}
+
+
+
+
+
+# Specifiers
+
+- public 
+- external
+- private 
+- internal
+
+
+- view
+- pure

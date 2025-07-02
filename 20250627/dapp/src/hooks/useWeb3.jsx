@@ -29,7 +29,6 @@ const useWeb3 = (abi, CA) => {
         setWeb3(web3Provider);
         setContract(new web3Provider.eth.Contract(abi, CA))
     }
-
     useEffect(() => {
         reloadWeb3();
         const ChainIdhandler = (chainId) => {
@@ -50,7 +49,6 @@ const useWeb3 = (abi, CA) => {
             window.ethereum.removeListener("chainChanged", ChainIdhandler)
         }
     }, [abi, CA])
-
     return {user, web3, contract}
 }
 

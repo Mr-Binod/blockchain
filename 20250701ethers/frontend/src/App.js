@@ -78,10 +78,10 @@ function App() {
     eventLoad()
   }, [contract])
 
-  const Send = async () => {
-    const tx = await sendDigi(receiver, 2)
-    tx.wait()
-  }
+  // const Send = async () => {
+  //   const tx = await sendDigi(receiver, 2)
+  //   tx.wait()
+  // }
 
   // (() => {})();
 
@@ -142,7 +142,7 @@ const DigimonCard = ({ url, name }, sendDigi) => {
       <img src={url} width="200px" />
       <div>{name}</div>
       <input onChange={(e) => setReceiver(e.target.value)} />
-      <button onClick={Send()}>send</button>
+      {/* <button onClick={Send()}>send</button> */}
     </div>
   )
 }

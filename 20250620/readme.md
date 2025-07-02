@@ -145,8 +145,8 @@ interface Account {
 > 내가 배포한 컨트랙트 저장 => CA (HASH문자열) 
 
 #### EOA, CA
-> EOA : 사용자 지갑
-> CA : 내가 배포한 컨트랙트의 주소
+> EOA (EXTERNALLY OWNED ACCOUNT) : 사용자 지갑
+> CA (CONTRACT ACCOUNT) : 내가 배포한 컨트랙트의 주소
 > 서명을 할수 있느냐? 없느냐?
 
 > EOA => (트랜재션) => CA =>(메시지) CA

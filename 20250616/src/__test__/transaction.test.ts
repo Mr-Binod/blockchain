@@ -8,11 +8,11 @@ import { Wallet } from "../wallet"
 import { UTXOLedger } from "../UTXO";
 
 describe('transaction check', () => {
-  let wallet01 : Wallet;
-  let wallet02 : Wallet;
-  let mempool : Mempool;
-  let blockChain : BlockChain;
-  let utxoLedger : UTXOLedger
+  let wallet01: Wallet;
+  let wallet02: Wallet;
+  let mempool: Mempool;
+  let blockChain: BlockChain;
+  let utxoLedger: UTXOLedger
 
   test("초기화", () => {
     wallet01 = new Wallet();
@@ -23,16 +23,16 @@ describe('transaction check', () => {
 
     // UTXO 미사용 객체의 이전 트랜젯션 내용을 포함
     // 반감기 기준으로 보상이 절반씩 줄어들었고 총발행량 기준으로 총 발행량에서 보상만큼의 이전 트랜잿션
-    const txInput : TxInput = {
-        txId : "",
-        outputIndex : 0,
-        signature : "",
-        publicKey : ""
+    const txInput: TxInput = {
+      txId: "",
+      outputIndex: 0,
+      signature: "",
+      publicKey: ""
     }
     // 출력 값 지갑 주소 첫번째가
-    const txOutput : TxOutput = {
-        address : wallet01.account,
-        amount : 50
+    const txOutput: TxOutput = {
+      address: wallet01.account,
+      amount: 50
     }
 
     // 월래 이 트랜젝션을 mempool
@@ -65,20 +65,20 @@ describe('transaction check', () => {
     // UTXO 조회해서 잔액 가져오기
     const utxos = utxoLedger.getUtxoAddress(wallet01.account)
     console.log("잔액 : ", utxos);
-    console.log("첫번째 지갑의",utxoLedger.getBalance(wallet01.account) )
+    console.log("첫번째 지갑의", utxoLedger.getBalance(wallet01.account))
     // 보낼 금액
     const sendValue = 20;
 
-    const txInput : TxInput = {
-      txId : utxos[0].txId,
-      outputIndex : utxos[0].outputIndex
+    const txInput: TxInput = {
+      txId: utxos[0].txId,
+      outputIndex: utxos[0].outputIndex
     }
     // 출력에 따른 계산 출력값 계산
     // 
     const tx = new Transaction([txInput], [{
-      address : wallet01.account, amount : 30
+      address: wallet01.account, amount: 30
     }, {
-      address : wallet02.account, amount : 20
+      address: wallet02.account, amount: 20
     }])
     // 서명 생성 내가 한일이 맞아 나는 이사람한테 송금할꺼야
     tx.signInputs(wallet01); // 수수료가 발생하지만 우리는 없어
