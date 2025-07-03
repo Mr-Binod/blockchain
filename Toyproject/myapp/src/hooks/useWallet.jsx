@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { BrowserProvider, Contract, ethers, Wallet } from "ethers"
-import Coinjson from "../ABI/CoinModule#CoinNFT.json"
+import Coinjson from "../ABI/CoinNFT.json"
 
 const NETWORK = {
     chainId: "0xaa36a7",
@@ -24,7 +24,7 @@ const useWallet = () => {
         console.log(_provider)
         const _signer = await _provider.getSigner()
         const _account = await _signer.getAddress();
-        const _contract = new Contract("0x69A86D27E8033b80bfE93C8A3107848b4b29e94f", Coinjson.abi, _signer)
+        const _contract = new Contract("0x2D7BA8617e135eDd95FAb591963Ad85cbC9ee3B4", Coinjson.abi, _signer)
         const { chainId } = await _provider.getNetwork();
 
         setIsNetwork(`0x${chainId.toString(16)}` === NETWORK.chainId)

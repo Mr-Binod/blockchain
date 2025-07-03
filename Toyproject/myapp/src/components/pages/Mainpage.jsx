@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from "styled-components"
 import useWallet from '../../hooks/useWallet';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 const Wrap = styled.div`
     padding : 50px 70px;
     .item {
@@ -63,7 +63,7 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
     const [tokenamt, setTokenamt] = useState(null);
     const [usertoken, setUsertoken] = useState(null);
     const [events, setEvents] = useState([])
-
+    const navigate = useNavigate();
     const BuyToken = async () => {
         if (!contract) {
             alert("connect wallet")
@@ -74,7 +74,7 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
             return;
         }
         await contract.buyToken(tokenamt);
-
+        navigate(0)
     }
 
     const BuyNFT = async (index) => {
@@ -87,22 +87,24 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
             return;
         }
         console.log(index)
-        await contract.buyNFT(index)
+        const _price = allcoins[index].price
+        await contract.buyNFT(index, _price)
+        navigate(0)
     }
  
     useEffect(() => {
         // console.log(contract, account, connectWallet)
         const eventLoad = async () => {
             const events = await contract?.queryFilter("NFTEvents")
-            const eventDTO = events.map(({ args }) => ({
+            const eventDTO = events?.map(({ args }) => ({
                 owner: args.owner,
                 name: args.name,
                 url: args.url,
                 price: args.price
             }))
             setEvents(eventDTO)
-            const Coins = await contract.getCoins();
-            const CoinsDTO = Coins.map((coin, index) => ({
+            const Coins = await contract?.getCoins();
+            const CoinsDTO = Coins?.map((coin, index) => ({
                 id: index,
                 owner: coin.owner,
                 name: coin.name,

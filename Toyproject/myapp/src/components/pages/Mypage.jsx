@@ -16,11 +16,13 @@ const Mypage = ({ contract, account, isNetwork, connectWallet }) => {
       setUsertoken(Usertoken)
      
         const UserCoins = await contract.getuserCoins();
+        console.log(UserCoins)
         const CoinsDTO = UserCoins.map((coin, index) => ({
                 id: index,
                 name: coin.name,
                 url: coin.url,
             }));
+        console.log(usercoins)
         setUsercoins(CoinsDTO);
         
       

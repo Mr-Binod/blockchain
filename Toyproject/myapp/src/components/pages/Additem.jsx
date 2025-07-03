@@ -15,12 +15,13 @@ const Additem = ({ contract, account, isNetwork, connectWallet }) => {
 
     const navigate = useNavigate();
     const Sell = async(e) => {
+
         e.preventDefault();
         connectWallet();
+        if(!contract) return;
         const name = e.target.elements.name.value;
         const url = e.target.elements.url.value;
         const price = e.target.elements.price.value;
-
         await contract.sellNFT(name, url, price)
         const getNFT = await contract.getCoins();
         console.log(getNFT,"getnft")
