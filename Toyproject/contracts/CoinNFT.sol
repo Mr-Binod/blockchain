@@ -48,30 +48,34 @@ contract CoinNFT is ERC20 {
         emit NFTEvents(msg.sender, name, price, url, trade);
     }
 
-    function buyNFT(uint index) external {
+    function buyNFT(uint index, uint price) external payable{
         require(balanceOf(msg.sender) > Coins[index].price);
+        
         string memory trade = "buy";
         address prevOwner = Coins[index].owner;
-        string storage name = Coins[index].name;
-        string storage url = Coins[index].url;
-        uint price = Coins[index].price;
-        Coins[index] = Coins[Coins.length - 1];
-        Coins.pop();
+        string memory name = Coins[index].name;
+        string memory url = Coins[index].url;
         userCoins[msg.sender].push(userCoin(name, url));
         balances[msg.sender] -= price;
-        balances[prevOwner] += price;
+        // balances[prevOwner] += price;
+        Coins[index] = Coins[Coins.length - 1];
+        Coins.pop();
         emit NFTEvents(msg.sender, name, price, url, trade);
     }
 
     function getCoins() external view returns (CoinStruct[] memory) {
         return Coins;
     }
+    function getCoinindex(uint index) public view returns (address, string memory, uint, string memory) {
+    CoinStruct memory coin = Coins[index];
+    return (coin.owner, coin.name, coin.price, coin.url);
+}
 
     function getuserCoins() external view returns (userCoin[] memory) {
         return userCoins[msg.sender];
     }
 
     function getuserTokens() external view returns (uint) {
-        return (balanceOf(msg.sender));
+        return (balances[msg.sender]);
     }
 }

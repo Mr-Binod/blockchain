@@ -1,8 +1,27 @@
 {
   "dependencies": {
-    "@openzeppelin/contracts": "^5.3.0"
+    "@openzeppelin/contracts": "^5.3.0",
+    "react": "^19.1.0"
   },
   "devDependencies": {
     "hardhat": "^2.25.0"
-  }
+  },
+  "name": "blockchain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mr-Binod/blockchain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mr-Binod/blockchain/issues"
+  },
+  "homepage": "https://github.com/Mr-Binod/blockchain#readme",
+  "description": ""
 }

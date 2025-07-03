@@ -43,10 +43,18 @@ describe("token test", () => {
 
   //   console.log(Contract.userCoins())
   // });
+  it("NFT 구매2", async () => {
+    console.log(await Contract.getCoinindex(0))
+  })
 
   it("NFT 구매", async () => {
-    await Contract.buyNFT(0)
     console.log(await Contract.getCoins())
+    await Contract.buyNFT(0, 20)
+    console.log(await Contract.getCoins(), "123")
+    const [[a,b]] = await Contract.getuserCoins()
+    console.log(a)
+    console.log(b)
+     console.log(await Contract.getuserTokens())
   })
 })
 
