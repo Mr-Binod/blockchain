@@ -50,3 +50,7 @@ a = {key : 9}
 
 - view
 - pure
+
+
+
+npx hardhat ignition deploy ignition/modules/DigimonModule.js --network sepolia
