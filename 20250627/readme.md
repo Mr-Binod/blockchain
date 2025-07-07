@@ -7,7 +7,7 @@ uint amount = 10;
 > 이더와 별개로 자산의 형태를 토큰으로 표현
 
 
-### EIP 
+### EIP  Ethereum Improvement Proposal.
 > ethereum 의 표준을 개선하기 위해서 사용하는 공식문서 형태
 > w3c 웹 표준을 정의하는것처름 이더리움에서도 eip 를 통해서 새로운 기술의 표준을 서로 제안한다
 
