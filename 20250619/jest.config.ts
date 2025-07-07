@@ -28,7 +28,6 @@ const config : Config.InitialOptions = {
     moduleFileExtensions : ["ts", "js"],
     // 테스트를 진행할 파일의 경로 패턴
     testMatch : ["<rootDir>/**/*.test.(js|ts)"],
-
     // 모듈의 이름의 별칭을 지정
     // 모듈을 가져올때 모듈을 가져올때 경롤를 지정
     // src/ 쓰면 값으로 할당한 경로에 도달
@@ -40,7 +39,6 @@ const config : Config.InitialOptions = {
     verbose : true,
     testTimeout : 1_000_000_000,
     preset : "ts-jest",
-
 }
 
 export default config

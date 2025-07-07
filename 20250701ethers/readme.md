@@ -72,18 +72,15 @@ const transaction = await wallet.sendTransaction({
 await transaction.wait();
 ```
 
-
 3. 컨트랙트
 
 ```js
 const contract = new ethers.Contract("CA", "ABI", "서명자(wallet)");
 // 개인키 서명자 공급자의 엔드포인트 컨트랙트의 함수의 내용
 const name = await contract.name(); // 조회 함수 
-
 // 토큰 전송
 const transaction = await contract.transfer("받는 사람 주소", "토큰 량");
 // msg.sender 부분은 곡급자의 공개키로 포함된다.
-
 // 이벤트 내용 조회
 // on 이벤트를 구독 즉 이벤트 호출마다 전달한 콜백함수를 호출시킨다
 contract.on("이벤트 이름", (from, to, amount) => {
