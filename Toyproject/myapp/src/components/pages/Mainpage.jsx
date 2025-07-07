@@ -28,15 +28,20 @@ const PageContainer = styled.div`
 `;
 
 const HeroSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  margin-bottom: 3rem;
-  
+  padding-bottom: 0;
+  margin-bottom: 0;
   h1 {
     background: linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+    line-height: 1;
   }
   
   p {
@@ -44,6 +49,65 @@ const HeroSection = styled.div`
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
+    margin-bottom: 0;
+    line-height: 1;
+    text-align: center;
+  }
+`;
+
+const RecentlyAddedSection = styled.div`
+  width: 1466px;
+  box-sizing: border-box;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  max-width: none;
+  margin-right: 0;
+  height: 276px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: rgba(30, 41, 59, 0.7);
+  border-radius: 16px;
+  margin-bottom: 0;
+`;
+
+const RecentlyAddedGrid = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  box-sizing: border-box;
+`;
+
+const RecentlyAddedCard = styled(Card)`
+  width: 220px;
+  height: 206px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 1rem;
+  .nft-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+  }
+  .nft-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: ${colors.light[100]};
+  }
+  .nft-price {
+    color: ${colors.accent};
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -68,11 +132,15 @@ const StatsCard = styled(Card)`
 const TokenPurchaseCard = styled(Card)`
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
+  height: 420px;
 `;
 
 const NFTGrid = styled(Grid)`
   margin-top: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(4, 350px);
+  justify-content: center;
+  gap: 1rem;
 `;
 
 const NFTCard = styled(Card)`
@@ -80,16 +148,18 @@ const NFTCard = styled(Card)`
   overflow: hidden;
   padding: 0.7rem 0.7rem 1rem 0.7rem;
   min-width: 0;
-  max-width: 160px;
-  margin: 0 auto;
+  width: 100%;
   
   .nft-image {
     width: 100%;
-    height: 180px;
+    height: 305px;
     object-fit: cover;
+    display: block;
+    overflow: hidden;
     border-radius: 10px;
     margin-bottom: 0.7rem;
     transition: transform 0.3s ease;
+    margin-left: 0;
   }
   
   &:hover .nft-image {
@@ -142,14 +212,15 @@ const EmptyState = styled.div`
 
 const MainLayout = styled.div`
   display: flex;
-  gap: 2.5rem;
+  width: 100%;
   align-items: flex-start;
-  margin-top: 2.5rem;
+  margin-top: 0;
 `;
 
 const CenterColumn = styled.div`
-  flex: 2;
+  max-width: calc(100vw - ${SIDEBAR_WIDTH + SIDEBAR_RIGHT + 64}px);
   min-width: 0;
+  width: 100%;
 `;
 
 const RightColumn = styled.div`
@@ -163,9 +234,19 @@ const RightColumn = styled.div`
   gap: 1.5rem;
 `;
 
+const TallCard = styled(Card)`
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
 const InfoCard = styled(Card)`
+  margin-top: 55px  ;
   margin-bottom: 2rem;
   text-align: center;
+  overflow: hidden;
+  height: 220px;
 `;
 
 const ModalOverlay = styled.div`
@@ -233,6 +314,10 @@ const SplashTagline = styled.div`
   letter-spacing: 0.5px;
 `;
 
+const RecentlyAddedTitle = styled.h2`
+  margin-bottom: 0;
+`;
+
 function OpeningAnimation({ onFinish }) {
   const [fadeOut, setFadeOut] = useState(false);
   useEffect(() => {
@@ -273,61 +358,13 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
   const [tokenamt, setTokenamt] = useState(null);
   const [usertoken, setUsertoken] = useState(null);
   const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingIndex, setLoadingIndex] = useState(null);
+  const [isTokenLoading, setIsTokenLoading] = useState(false);
   const navigate = useNavigate();
 
-  const BuyToken = async () => {
-    if (!contract) {
-      alert("Please connect your wallet first");
-      return;
-    }
-    if (tokenamt < 100) {
-      alert("Minimum purchase is 100 tokens");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      await contract.buyToken(tokenamt);
-      navigate(0);
-    } catch (error) {
-      console.error("Error buying tokens:", error);
-      alert("Failed to purchase tokens. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const BuyNFT = async (index) => {
-    if (!contract) {
-      alert("Please connect your wallet first");
-      return;
-    }
-    if (usertoken < events[index].price) {
-      alert("Insufficient balance");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const _price = allcoins[index].price;
-      await contract.buyNFT(index, _price);
-      navigate(0);
-    } catch (error) {
-      console.error("Error buying NFT:", error);
-      alert("Failed to purchase NFT. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    if (!account) {
-      connectWallet();
-    }
-  }, []);
-
-  useEffect(() => {
+  // Extract eventLoad to a separate function
     const eventLoad = async () => {
       if (!contract) return;
-      
       try {
         const events = await contract.queryFilter("NFTEvents");
         const eventDTO = events?.map(({ args }) => ({
@@ -355,27 +392,106 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
       }
     };
     
+  useEffect(() => {
     eventLoad();
   }, [contract]);
 
+  const BuyToken = async () => {
+    if (!contract) {
+      alert("Please connect your wallet first");
+      return;
+    }
+    if (tokenamt < 100) {
+      alert("Minimum purchase is 100 tokens");
+      return;
+    }
+    setIsTokenLoading(true);
+    try {
+      await contract.buyToken(tokenamt);
+      await eventLoad();
+    } catch (error) {
+      console.error("Error buying tokens:", error);
+      alert("Failed to purchase tokens. Please try again.");
+    } finally {
+      setIsTokenLoading(false);
+    }
+  };
+
+  const BuyNFT = async (index) => {
+    if (!contract) {
+      alert("Please connect your wallet first");
+      return;
+    }
+    if (usertoken < events[index].price) {
+      alert("Insufficient balance");
+      return;
+    }
+    setLoadingIndex(index);
+    try {
+      const _price = allcoins[index].price;
+      await contract.buyNFT(index, _price);
+      await eventLoad();
+    } catch (error) {
+      console.error("Error buying NFT:", error);
+      alert("Failed to purchase NFT. Please try again.");
+    } finally {
+      setLoadingIndex(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!account) {
+      connectWallet();
+    }
+  }, []);
+
+  // Helper function to scroll to NFT grid
+  const scrollToNFTGrid = () => {
+    const grid = document.getElementById('nft-grid');
+    if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Helper function to scroll to NFT card in the main grid
+  const scrollToNFTCard = (index) => {
+    const card = document.getElementById(`nft-card-${index}`);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   return (
     <PageContainer>
-      <Container marginRight={`${SIDEBAR_WIDTH + SIDEBAR_RIGHT + 12}px`}>
+      <Container marginRight={`${SIDEBAR_WIDTH + SIDEBAR_RIGHT + 12}px`} width={90}>
         <HeroSection>
-          <h1>🚀 NFT Marketplace</h1>
-          <p>Discover, collect, and trade unique digital assets on the blockchain</p>
         </HeroSection>
+        <RecentlyAddedSection>
+          <RecentlyAddedTitle>Recently Added NFTs</RecentlyAddedTitle>
+          <RecentlyAddedGrid>
+            {(allcoins.slice(0, 6)).map((el, index) => (
+              <RecentlyAddedCard key={index} onClick={() => scrollToNFTCard(index)} style={{ cursor: 'pointer' }}>
+                <img 
+                  src={el.url} 
+                  alt={el.name} 
+                  className="nft-image"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/220x120/6366f1/ffffff?text=NFT+Image';
+                  }}
+                />
+                <div className="nft-name">{el.name}</div>
+                <div className="nft-price">{el.price} Tokens</div>
+              </RecentlyAddedCard>
+            ))}
+          </RecentlyAddedGrid>
+        </RecentlyAddedSection>
         {/* Main two-column layout */}
         <MainLayout>
           {/* Center: NFT Grid and actions */}
           <CenterColumn>
             <Divider />
             <div>
-              <h2>🛍️ Available NFTs</h2>
+              <h2 style={{ marginBottom: 0 }}>🛍️ Available NFTs</h2>
               {allcoins?.length > 0 ? (
-                <NFTGrid>
+                <NFTGrid id="nft-grid">
                   {allcoins.map((el, index) => (
-                    <NFTCard key={index}>
+                    <NFTCard key={index} id={`nft-card-${index}`}>
                       <img 
                         src={el.url} 
                         alt={el.name} 
@@ -393,12 +509,12 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
                       </div>
                       <Button 
                         onClick={() => BuyNFT(index)}
-                        disabled={isLoading || !account || usertoken < el.price}
+                        disabled={loadingIndex === index || !account || usertoken < el.price}
                         style={{ width: '100%' }}
                       >
                         {!account ? 'Connect Wallet' : 
                          usertoken < el.price ? 'Insufficient Balance' : 
-                         isLoading ? 'Processing...' : 'Buy NFT'}
+                         loadingIndex === index ? 'Processing...' : 'Buy NFT'}
                       </Button>
                     </NFTCard>
                   ))}
@@ -424,12 +540,12 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
               <p style={{ color: colors.light[200], marginBottom: '1.5rem' }}>
                 Buy tokens to purchase NFTs from the marketplace
               </p>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'end' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
                 <div style={{ flex: 1 }}>
                   <Label htmlFor="tokenAmount">Token Amount (Min: 100)</Label>
                   <Input
                     id="tokenAmount"
-                    type="number"
+                    type="text"
                     placeholder="Enter token amount"
                     value={tokenamt || ''}
                     onChange={(e) => setTokenamt(e.target.value)}
@@ -438,9 +554,9 @@ const Mainpage = ({ contract, account, isNetwork, connectWallet }) => {
                 </div>
                 <ButtonSuccess 
                   onClick={BuyToken} 
-                  disabled={isLoading || !tokenamt || tokenamt < 100}
+                  disabled={!tokenamt || tokenamt < 100}
                 >
-                  {isLoading ? 'Processing...' : 'Buy Tokens'}
+                  Buy Tokens
                 </ButtonSuccess>
               </div>
             </TokenPurchaseCard>

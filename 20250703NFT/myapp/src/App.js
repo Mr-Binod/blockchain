@@ -13,12 +13,12 @@ const pinata_secret_api_key = "3a0293c0918269143c81ab9c4ef791d4f83b0d7f925ddb8aa
 
 function App() {
 
-  const {account, contract, connectWallet} = useWallet();
+  const { account, contract, connectWallet } = useWallet();
   const [file, setFile] = useState();
 
-  useEffect (() => {
+  useEffect(() => {
     connectWallet()
-  },[])
+  }, [])
 
   const uploadIPFS = async () => {
     if (!file) return;
@@ -49,18 +49,19 @@ function App() {
       image
     }
     const blob = new Blob([JSON.stringify(metadata)], {
-      type : "application/json"
+      type: "application/json"
     })
     const formData = new FormData();
     formData.append("file", blob, "metadata.json");
-    const {data} = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
-       headers: {
+    const { data } = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formData, {
+      headers: {
         "Content-Type": "multipart/form-data",
         pinata_api_key,
         pinata_secret_api_key
-  }})
-  console.log(data.IpfsHash)
-  return data.IpfsHash
+      }
+    })
+    console.log(data.IpfsHash)
+    return data.IpfsHash
   }
 
   return (

@@ -19,7 +19,7 @@ function App() {
     EventSell()
   }, [])
 
-  const uploadIPFS = async () => {
+  const uploadIPFS = async () => {  // (InterPlanetary File System.)
     if (!file) return;
     const formData = new FormData();
     formData.append("file", file);
@@ -125,7 +125,7 @@ function App() {
           const { data: json } = await axios.get(`https://ipfs.io/ipfs/${tokenUri}`);
           json.image = json.image.replace("ipfs://", `https://ipfs.io/ipfs/`)
           NFTlist.push({ tokenId, ...json });
-          // https://ipfs.io/ipfs
+          // https://ipfs.io/ipfs  (InterPlanetary File System.)
         }
       }
     }

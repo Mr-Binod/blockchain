@@ -57,17 +57,30 @@ const NFTCollectionCard = styled(Card)`
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
+  width: 350px;
+  padding: 16px;
   
   &:hover {
     transform: translateY(-8px);
   }
   
-  .nft-image {
+  .nft-image-wrapper {
     width: 100%;
-    height: 250px;
-    object-fit: cover;
+    height: 220px;
+    overflow: hidden;
     border-radius: 12px;
     margin-bottom: 1rem;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nft-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
     transition: transform 0.3s ease;
   }
   
@@ -269,14 +282,16 @@ const Mypage = ({ contract, account, isNetwork, connectWallet }) => {
             <CollectionGrid>
               {usercoins.map((el, index) => (
                 <NFTCollectionCard key={index}>
-                  <img 
-                    src={el.url} 
-                    alt={el.name} 
-                    className="nft-image"
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/300x250/6366f1/ffffff?text=NFT+Image';
-                    }}
-                  />
+                  <div className="nft-image-wrapper">
+                    <img 
+                      src={el.url} 
+                      alt={el.name} 
+                      className="nft-image"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/300x250/6366f1/ffffff?text=NFT+Image';
+                      }}
+                    />
+                  </div>
                   <div className="nft-info">
                     <div className="nft-name">{el.name}</div>
                     <div className="nft-status">

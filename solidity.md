@@ -54,3 +54,13 @@ a = {key : 9}
 
 
 npx hardhat ignition deploy ignition/modules/DigimonModule.js --network sepolia
+
+
+
+
+
+pinata 
+infura
+opensea
+erc721
+erc20

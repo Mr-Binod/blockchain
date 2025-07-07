@@ -86,10 +86,12 @@ export const GlobalStyle = createGlobalStyle`
 
 // Common styled components
 export const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  /* margin-right: ${(props) => props.marginRight || 0}; */
+  width: 90%;
+  box-sizing: border-box;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-left: auto;
+  margin-right: ${(props) => props.marginRight || 'auto'};
 `;
 
 export const Card = styled.div`
@@ -245,7 +247,7 @@ export const Divider = styled.hr`
   border: none;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, ${colors.dark[500]} 50%, transparent 100%);
-  margin: 2rem 0;
+  margin: 1rem 0 0 0;
 `;
 
 // Animation keyframes
