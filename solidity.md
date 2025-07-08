@@ -57,7 +57,6 @@ npx hardhat ignition deploy ignition/modules/DigimonModule.js --network sepolia
 
 
 
-<<<<<<< HEAD
 
 
 pinata 
@@ -65,7 +64,6 @@ infura
 opensea
 erc721
 erc20
-=======
 ### 내일 이더리움 백서
 > 이더리움 네트워크
 > EVM 가상 머신 => 상태의 값을 저장 솔리디티 코드 실행 런타임 환경(OPCODE) ()
@@ -82,4 +80,10 @@ erc20
 > 거래소
 > 슈퍼앱 => 하이브리드 앱
 > 계정 추상화      
->>>>>>> 5f5def972d895fcbf7baca6a75e11cd35ed51229
+
+
+
+msg.sig
+msg.data
+msg.address
+msg.value
