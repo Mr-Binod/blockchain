@@ -3,7 +3,7 @@ import { ethers } from "ethers"
 
 
 
-const useEthers = ({ _privateKeys = null }) => {
+const useEthers = ( _privateKeys ) => {
     const [user, setUser] = useState({ account: "", balance: "0" })
     const [provider, setProvider] = useState(null);
     const [pkprovider, setPkprovider] = useState([])
@@ -12,7 +12,6 @@ const useEthers = ({ _privateKeys = null }) => {
     // 개인키로 지갑 객체 생성
     useEffect(() => {
         (async () => {
-
         
         if (_privateKeys) {
             // infura Provider dont use metamask

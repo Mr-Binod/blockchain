@@ -6,5 +6,15 @@ const getWallet = async () => {
     console.log(data, "api")
     return data
 }
+const getWallets = async () => {
+    const {data} = await axios.get('http://localhost:3001/wallets')
+    console.log(data, "api2")
+    return data
+}
+const createWallet = async (user) => {
+    const {data} = await axios.post('http://localhost:3001/wallet', {user})
+    console.log(data, "3")
+    return data
+}
 
-export default getWallet
+export {getWallet, getWallets, createWallet}
