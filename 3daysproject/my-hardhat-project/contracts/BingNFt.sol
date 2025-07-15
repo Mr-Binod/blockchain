@@ -12,12 +12,9 @@ contract BingNFT is ERC1155, Ownable {
         uint token;
         uint price;
     }
-    struct Ownertokens {
-        uint tokenid;
-        uint tokens;
-    }
+
     mapping(uint => Sellstake) public items;
-    mapping(address => Ownertokens[])  private ownerTokens;
+    mapping(address => Ownertokens[])  private ownerNfts;
     mapping(uint256 => string) private _uris;
 
     uint[] public listNFTids;
@@ -28,17 +25,17 @@ contract BingNFT is ERC1155, Ownable {
         // No need for external address parameter
     }
 
-    function settokenURI(string memory newuri) external returns (uint) {
+    function settokenURI(string memory newuri, address sender) external returns (uint) {
         uint createdTokenId = tokenId;
         
-        // Mint 100 tokens of the new ID to msg.sender
-        _mint(msg.sender, createdTokenId, 100, "");
+        // Mint 100 tokens of the new ID to 
+        _mint(sender, createdTokenId, 100, "");
         
         // Set the URI for this token ID
         _uris[createdTokenId] = newuri;
         
         // Store the owner mapping with token ID and amount
-        ownerTokens[msg.sender].push(Ownertokens(createdTokenId, 100));
+        ownerNfts[sender].push(Ownertokens(createdTokenId, 100));
         
         // Increment token ID for next creation
         tokenId++;
@@ -46,45 +43,45 @@ contract BingNFT is ERC1155, Ownable {
         return createdTokenId;
     }
 
-    function SellNFT(uint nftid, uint token, uint price) external {
-        require(balanceOf(msg.sender, nftid) >= token, "Insufficient tokens");
+    function SellNFT(address sender, uint nftid, uint token, uint price) external {
+        require(balanceOf(sender, nftid) >= token, "Insufficient tokens");
         require(price > 0, "Price must be greater than 0");
         require(items[nftid].seller == address(0), "NFT already for sale");
         require(token > 0, "Must sell at least 1 token");
         
         // Transfer tokens from seller to contract (marketplace)
-        _safeTransferFrom(msg.sender, address(this), nftid, token, "");
+        _safeTransferFrom(sender, address(this), nftid, token, "");
         
         // Update seller's token tracking
-        for(uint i = 0; i < ownerTokens[msg.sender].length; i++) {
-            if(ownerTokens[msg.sender][i].tokenid == nftid) {
-                ownerTokens[msg.sender][i].tokens -= token;
+        for(uint i = 0; i < ownerNfts[sender].length; i++) {
+            if(ownerNfts[sender][i].tokenid == nftid) {
+                ownerNfts[sender][i].tokens -= token;
                 break;
             }
         }
         
         // Add to marketplace
-        items[nftid] = Sellstake(msg.sender, token, price);
+        items[nftid] = Sellstake(sender, token, price);
         listNFTids.push(nftid);
     }
 
-    function BuyNFT(uint nftid) external payable {
+    function BuyNFT(uint nftid, address sender) external payable {
         Sellstake memory item = items[nftid];
         require(item.price == msg.value, "Incorrect price");
-        require(msg.sender != item.seller, "Cannot buy your own NFT");
+        require(sender != item.seller, "Cannot buy your own NFT");
         require(item.seller != address(0), "NFT not for sale");
         
         // Transfer the tokens from contract to buyer
-        _safeTransferFrom(address(this), msg.sender, nftid, item.token, "");
+        _safeTransferFrom(address(this), sender, nftid, item.token, "");
         
         // Transfer the payment to seller
         payable(item.seller).transfer(msg.value);
         
         // Update buyer's token tracking
         bool found = false;
-        for(uint i = 0; i < ownerTokens[msg.sender].length; i++) {
-            if(ownerTokens[msg.sender][i].tokenid == nftid) {
-                ownerTokens[msg.sender][i].tokens += item.token;
+        for(uint i = 0; i < ownerNfts[sender].length; i++) {
+            if(ownerNfts[sender][i].tokenid == nftid) {
+                ownerNfts[sender][i].tokens += item.token;
                 found = true;
                 break;
             }
@@ -92,26 +89,26 @@ contract BingNFT is ERC1155, Ownable {
         
         // If buyer doesn't have this token type yet, add it
         if(!found) {
-            ownerTokens[msg.sender].push(Ownertokens(nftid, item.token));
+            ownerNfts[sender].push(Ownertokens(nftid, item.token));
         }
         
         // Remove from sale
         delete items[nftid];
     }
     
-    function cancelSale(uint nftid) external {
+    function cancelSale(uint nftid, address sender) external {
         Sellstake memory item = items[nftid];
-        require(item.seller == msg.sender, "Only seller can cancel");
+        require(item.seller == sender, "Only seller can cancel");
         require(item.seller != address(0), "NFT not for sale");
         
         // Return tokens to seller
-        _safeTransferFrom(address(this), msg.sender, nftid, item.token, "");
+        _safeTransferFrom(address(this), sender, nftid, item.token, "");
         
         // Update seller's token tracking
         bool found = false;
-        for(uint i = 0; i < ownerTokens[msg.sender].length; i++) {
-            if(ownerTokens[msg.sender][i].tokenid == nftid) {
-                ownerTokens[msg.sender][i].tokens += item.token;
+        for(uint i = 0; i < ownerNfts[sender].length; i++) {
+            if(ownerNfts[sender][i].tokenid == nftid) {
+                ownerNfts[sender][i].tokens += item.token;
                 found = true;
                 break;
             }
@@ -119,13 +116,10 @@ contract BingNFT is ERC1155, Ownable {
         
         // If seller doesn't have this token type in tracking yet, add it
         if(!found) {
-            ownerTokens[msg.sender].push(Ownertokens(nftid, item.token));
-        }
-        
-        // Remove from sale
+            ownerNfts[sender].push(Ownertokens(nftid, item.token));
+        }        // Remove from sale
         delete items[nftid];
     }
-
 
     function uri(uint256 tokenid) public view virtual override returns (string memory) {
         string memory customUri = _uris[tokenid];
@@ -140,21 +134,21 @@ contract BingNFT is ERC1155, Ownable {
     function getall(uint item) external view returns(Sellstake memory) {
         return items[item];
     }
-    function ownerToken() external view returns(Ownertokens[] memory) {
-        return ownerTokens[msg.sender];
+    function OwnerNfts(address user) external view returns(OwnerNfts[] memory) {
+        return ownerNfts[user];
     }
     
-    function getOwnerTokenCount() external view returns(uint) {
-        return ownerTokens[msg.sender].length;
+    function getOwnerTokenCount(address user) external view returns(uint) {
+        return ownerNfts[user].length;
     }
     
-    function getOwnerTokenAtIndex(uint index) external view returns(Ownertokens memory) {
-        require(index < ownerTokens[msg.sender].length, "Index out of bounds");
-        return ownerTokens[msg.sender][index];
+    function getOwnerTokenAtIndex(address user, uint index) external view returns(Ownertokens memory) {
+        require(index < ownerNfts[user].length, "Index out of bounds");
+        return ownerNfts[user][index];
     }
     
     function getMintedTokens(address user) external view returns(uint[] memory tokenIds, uint[] memory amounts) {
-        Ownertokens[] memory userTokens = ownerTokens[user];
+        Ownertokens[] memory userTokens = ownerNfts[user];
         tokenIds = new uint[](userTokens.length);
         amounts = new uint[](userTokens.length);
         
@@ -162,6 +156,7 @@ contract BingNFT is ERC1155, Ownable {
             tokenIds[i] = userTokens[i].tokenid;
             amounts[i] = userTokens[i].tokens;
         }
+        return (tokenIds, amounts);
     }
     
     function getCurrentBalance(address user, uint tknId) external view returns(uint) {
@@ -169,7 +164,7 @@ contract BingNFT is ERC1155, Ownable {
     }
     
     function getAllTokenBalances(address user) external view returns(uint[] memory tokenIds, uint[] memory balances) {
-        Ownertokens[] memory userTokens = ownerTokens[user];
+        Ownertokens[] memory userTokens = ownerNfts[user];
         tokenIds = new uint[](userTokens.length);
         balances = new uint[](userTokens.length);
         
@@ -177,8 +172,8 @@ contract BingNFT is ERC1155, Ownable {
             tokenIds[i] = userTokens[i].tokenid;
             balances[i] = balanceOf(user, userTokens[i].tokenid);
         }
+        return (tokenIds, balances);
     }
-    
 }
 
 // How to "Get" It:

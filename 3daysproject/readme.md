@@ -33,7 +33,7 @@ framework used
 
 npx hardhat run scripts/deploy.js --network sepolia
 
-npx hardhat ignition deploy ignition/modules/ConfigurableDeploy.js --network sepolia
+npx hardhat ignition deploy ignition/modules/deployall.js --network sepolia
 
 ConfigurableDeployModule#BingNFT - 0xA51224dd0Fe0051d49a6ADbEA1487cF0D13f72C7
 ConfigurableDeployModule#Bingtoken - 0xdd595124cBA6CDa0115a9460f2c0848561dceC32

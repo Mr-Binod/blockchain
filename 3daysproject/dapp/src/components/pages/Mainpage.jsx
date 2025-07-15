@@ -14,7 +14,7 @@ const Mainpage = () => {
     const islogin = useSelector((state) => state.State)
     const userId = useSelector((state) => state.userId)  // ✅ Get from Redux
     const user = useSelector((state) => state.user)      // ✅ Get from Redux
-    const { pkprovider, provider, paymaster, signer, contractMeta, contractNFT, contractCoin } = useEthers(userkeys, user)
+    const { pkprovider, provider, paymaster, signer, contractMeta, contractNFT, contractCoin, contractMetaNft } = useEthers(userkeys, user)
     
     const dispatch = useDispatch()
 
@@ -66,7 +66,7 @@ const Mainpage = () => {
             const File = e.target.file.files[0];
             formdata.append("file", File)
             console.log('test uploadipfs data', formdata, signer)
-            const data = await uploadIPFS(formdata, paymaster, contractMeta, contractNFT)
+            const data = await uploadIPFS( formdata, paymaster, contractMetaNft, contractNFT, signer)
             console.log(data, 'uploadipfs data')
             setNfts([...nfts, data])
 
@@ -128,12 +128,12 @@ const Mainpage = () => {
     useEffect(() => {
         // console.log(users, 'users data')
         // console.log(userId, 'userId data')
-        console.log(user, 'user data')
+        // console.log(user, 'user data')
         // console.log(data, 'query data')
         // console.log(userkeys, 'userkeys data')
         // console.log(islogin, 'islogin data')
-        console.log(signer, 'signer data')
-        console.log(nfts, 'nfts data')
+        // console.log(signer, 'signer data')
+        // console.log(nfts, 'nfts data')
         // console.log(pkprovider, provider, paymaster, 'providers data')
         if(!contractNFT) return;
         (async () => {

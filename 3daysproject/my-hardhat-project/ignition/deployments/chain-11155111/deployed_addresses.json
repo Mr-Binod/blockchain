@@ -1,5 +1,6 @@
 {
-  "ConfigurableDeployModule#BingNFT": "0xF50716D1D7F8436ca3c7a9dD8B5Fc29DEe397672",
-  "ConfigurableDeployModule#Bingtoken": "0x49FEF875c511Fa759fBB6bf6F19fb35691ca918e",
-  "ConfigurableDeployModule#MetaTransaction": "0x9B21DE2c924aD6f2C8257a0074bb5bB462e856B2"
+  "DeployAllModule#BingNFT": "0x4788338E5236904150BAb7A9C39843302E220Fd1",
+  "DeployAllModule#Bingtoken": "0x650E0043603cD21126051c2102083995A57d4747",
+  "DeployAllModule#MetaBingNFT": "0x2225e76dafD379BD91aC505cEc1fbbAe503701b5",
+  "DeployAllModule#MetaTransaction": "0x4FC92402F91001f6Def3EF08B2b3CeD7F4a677B4"
 }

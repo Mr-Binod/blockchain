@@ -1,29 +1,16 @@
-// Configurable Deployment Module
-// This module allows you to customize token parameters
-
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-module.exports = buildModule("ConfigurableDeployModule", (m) => {
-  // Get parameters with defaults
+module.exports = buildModule("DeployAllModule", (m) => {
+      const bingtoken = m.contract("Bingtoken", [
+        "Bing Token",  // name
+        "BING"         // symbol
+      ]);
+      
+      
+      const bingNFT = m.contract("BingNFT");
+      
+      const metaTransaction = m.contract("MetaTransaction", [bingtoken]);
+  const metaBingNFT = m.contract("MetaBingNFT", [bingNFT]);
 
-
-  // 1. Deploy BingNFT contract
-  const bingNFT = m.contract("BingNFT");
-
-  // 2. Deploy Bingtoken with custom parameters
-  const bingtoken = m.contract("Bingtoken", [
-    "Bing Token",  // name
-    "BTK"         // symbol
-  ]);
-
-  // 3. Deploy MetaTransaction contract
-  const metaTransaction = m.contract("MetaTransaction", [
-    bingtoken
-  ]);
-
-  return { 
-    bingNFT,
-    bingtoken,
-    metaTransaction
-  };
-}); 
+  return { bingNFT, bingtoken, metaTransaction, metaBingNFT };
+});

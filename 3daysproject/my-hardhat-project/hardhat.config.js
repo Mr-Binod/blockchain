@@ -12,7 +12,8 @@ module.exports = {
     sepolia: {
       url: process.env.SEPOLIA_URL || "https://sepolia.infura.io/v3/YOUR_PROJECT_ID",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 11155111
+      chainId: 11155111,
+      gasPrice: 30000000000 // 20 gwei (in wei)
     },
     // Mainnet (be careful!)
   //   mainnet: {
