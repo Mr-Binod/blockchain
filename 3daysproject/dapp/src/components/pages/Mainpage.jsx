@@ -136,7 +136,7 @@ const Mainpage = () => {
         // console.log(userkeys, 'userkeys data')
         // console.log(islogin, 'islogin data')
         // console.log(signer, 'signer data')
-        // console.log(nfts, 'nfts data')
+        console.log(nfts, 'nfts data', nfts[0]?.image)
         // console.log(pkprovider, provider, paymaster, 'providers data')
         if(!contractNFT) return;
 
@@ -185,11 +185,11 @@ const Mainpage = () => {
                     <button>submit</button>
                 </form>
                 <h3>NFTs:</h3>
+                {nfts?.map((el, i) => <div> <img key={i} src={el[i].image}/> <div>nft balance :{el[i]}</div></div>)}
                 <img src="http://gateway.pinata.cloud/ipfs/QmeuPaDUPkWsYfSMb2yUztWNhFUTTvPaqns3H9UW4fcGGY"/>
-                {nfts?.map((el, i) => <div> <img key={i} src={el[i].image}/> <div>nft balance :{el[i].nftbalance}</div></div>)}
                 <h3>Users:</h3>
                 {users && users.length > 0 ? (
-                    <ul>
+                    <ul>1
                         {users.map((user, index) => (
                             <li key={index}>
                                 User: {user.user} | Account: {user.account} | Balance: {user.balance}

@@ -25,12 +25,12 @@ const uploadIPFS = async (formdata, paymaster, contractMetaNft, contractNFT, sig
         await transaction.wait();
         alert("ipfs 업로드 이후 민팅 완료");
         try {
-            const ownerTokens = await ContractNFT.userTokens();
-            console.log('Owner tokens:', ownerTokens);
+            const ownerTokens = await ContractNFT.getAllTokenBalances(signer.address);
+            console.log('Owner tokens:', ownerTokens, data);
+            return ({image : `http://gateway.pinata.cloud/ipfs/${data.IpfsHash}`, data})
         } catch (error) {
             console.log('Error calling ownerToken:', error.message);
         }
-        return (`http://gateway.pinata.cloud/ipfs/${data.IpfsHash}`)
 
     } catch (error) {
         console.log('Error in uploadIPFS:', error);
@@ -79,6 +79,7 @@ const GetBTKcoin = async (signer, paymaster, contractMeta, contractCoin) => {
     const signature = await signer.signMessage(msgToSign);
     // console.log(paymaster.getAddress(), 'paymasteraddress', signature, txmsg)
     const Address = signer.getAddress()
+    console.log('getcoin', paymasterCnt)
     const tx = await paymasterCnt.mint(Address, 120, msgToSign, signature)
     await tx.wait()
     const balance = await contractCoin.balanceOf(signer.address)

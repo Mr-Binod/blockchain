@@ -3,7 +3,7 @@ import { ethers } from "ethers"
 import BingNFTABI from '../abi/BingNFT.json'
 import MetaABI from '../abi/MetaTransaction.json'
 import BingTokenABI from '../abi/Bingtoken.json'
-import MetaNftABI from '../abi/MetaBingNFT.json' 
+import MetaBingNFTABI from '../abi/MetaBingNFT.json'
 
 export const useEthers = (privatekeys, user) => {
     const [provider, setProvider] = useState(null)
@@ -15,19 +15,18 @@ export const useEthers = (privatekeys, user) => {
     const [contractCoin, setContractCOIN] = useState(null)
     const [contractMetaNft, setContractMetaNft] = useState(null)
 
-//     DeployAllModule#BingNFT - 0x90B3E76c33D36248F68dD770A293E1A7396Ee76B
-// DeployAllModule#Bingtoken - 0x912F2F6E153052F86070E0eaE35e74FA933B2eAc
-// DeployAllModule#MetaBingNFT - 0x72eA302125c01e2459d06A54f6b61b220388bF16
-// DeployAllModule#MetaTransaction - 0x245A376aB4eADEF7216922C71B95E65616CdC893
+    // DeployAllModule#BingNFT - 0x05AF089171046b10654Cd34BB17cc2A5218fF35b
+    // DeployAllModule#Bingtoken - 0xfd73ada76B2cf70E9f34bE058059C472F2BE76eD
+    // DeployAllModule#MetaBingNFT - 0xa26F06a45A3b629eeCA1f52Ce8d0B01A70B2A583
+    // DeployAllModule#MetaTransaction - 0x34C5B5592B140336CFE4B42eaa9172427B321261
 
- 
-    const BINGNFT = '0x4788338E5236904150BAb7A9C39843302E220Fd1'
-    const BINGTOKEN = '0x650E0043603cD21126051c2102083995A57d4747'
-    const METANFT = '0x2225e76dafD379BD91aC505cEc1fbbAe503701b5'
-    const METATXN = '0x4FC92402F91001f6Def3EF08B2b3CeD7F4a677B4'
+    const BINGNFT = '0x05AF089171046b10654Cd34BB17cc2A5218fF35b'
+    const BINGTOKEN = '0xfd73ada76B2cf70E9f34bE058059C472F2BE76eD'
+    const METATXN = '0x34C5B5592B140336CFE4B42eaa9172427B321261'
+    const METANFT = '0xa26F06a45A3b629eeCA1f52Ce8d0B01A70B2A583' // Deployed MetaBingNFT address
 
     useEffect(() => {
-        // console.log('useEthers: privatekeys length:', privatekeys?.length || 0, 'user:', user);
+        console.log('useEthers: privatekeys length:', privatekeys?.length || 0, 'user:', user);
 
         (async () => {
             if (privatekeys && privatekeys.length > 0) {
@@ -35,15 +34,16 @@ export const useEthers = (privatekeys, user) => {
                     const provider = new ethers.JsonRpcProvider("https://sepolia.infura.io/v3/e7468d2d517b4aa28ba51a6e589558e2")
                     const promiseWallet = privatekeys.map(async (pk) => {
                         const wallet = new ethers.Wallet(pk, provider);
-                        // const balance = await provider.getBalance(wallet.address)
-                        // const balanceEth = ethers.formatEther(balance)
+                        const balance = await provider.getBalance(wallet.address)
+                        const balanceEth = ethers.formatEther(balance)
                         return {
                             wallet,
-                            balance: wallet.balance,
+                            balance: balanceEth,
                             address: wallet.address
                         }
                     })
-                    const Paymaster = new ethers.Wallet("fbc1960a886986637345636605e54f7f7e54d1b36f92ee1ec44c77820c444a17", provider)
+                    const Paymaster = new ethers.Wallet("1bb48ef643ede40a87a2b32be5d9c11a0192490d94105dc6f81c0ae102dda212", provider)
+                    console.log(promiseWallet, 'promise')
                     const wallets = await Promise.all(promiseWallet)
 
                     setPaymaster(Paymaster);
@@ -55,23 +55,23 @@ export const useEthers = (privatekeys, user) => {
                         try {
                             const userWallet = new ethers.Wallet(user.data.privateKey, provider);
                             setSigner(userWallet);
-                            // console.log('User signer set:', userWallet.address);
+                            console.log('User signer set:', userWallet.address);
                         } catch (error) {
-                            // console.log('Error creating user wallet:', error);
+                            console.log('Error creating user wallet:', error);
                             // Fallback to first wallet if user wallet creation fails
                             if (wallets.length > 0) {
                                 setSigner(wallets[0].wallet);
-                                // console.log('Fallback signer set:', wallets[0].wallet.address);
+                                console.log('Fallback signer set:', wallets[0].wallet.address);
                             }
                         }
                     } else if (wallets.length > 0) {
                         // Fallback to first wallet if no user data
                         setSigner(wallets[0].wallet);
-                        // console.log('Default signer set:', wallets[0].wallet.address);
+                        console.log('Default signer set:', wallets[0].wallet.address);
                     }
 
                 } catch (error) {
-                    // console.log("Error in useEthers:", error);
+                    console.log("Error in useEthers:", error);
                 }
             } else {
                 // Reset signer when no private keys
@@ -90,12 +90,11 @@ export const useEthers = (privatekeys, user) => {
                 const contractNft = new ethers.Contract(BINGNFT, BingNFTABI.abi, provider)
                 const contractcoin = new ethers.Contract(BINGTOKEN, BingTokenABI.abi, provider)
                 const contractmeta = new ethers.Contract(METATXN, MetaABI.abi, provider)
-                const contractmetanft = new ethers.Contract(METANFT, MetaNftABI.abi, provider)
-                
+                const contractmetaNft = new ethers.Contract(METANFT, MetaBingNFTABI.abi, provider)
                 setContractNFT(contractNft)
                 setContractMETA(contractmeta)
                 setContractCOIN(contractcoin)
-                setContractMetaNft(contractmetanft)
+                setContractMetaNft(contractmetaNft)
             } catch (error) {
                 console.log('Error creating contracts:', error)
             }
@@ -103,6 +102,8 @@ export const useEthers = (privatekeys, user) => {
             // Reset contracts when no signer
             setContractNFT(null)
             setContractMETA(null)
+            setContractCOIN(null)
+            setContractMetaNft(null)
         }
     }, [signer])
 
