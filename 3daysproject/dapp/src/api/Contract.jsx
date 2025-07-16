@@ -5,13 +5,10 @@ const pinata_api_key = "84341dedc5714b228c1f";
 const pinata_secret_api_key = "3a0293c0918269143c81ab9c4ef791d4f83b0d7f925ddb8aafd43e4c1e3e819d"
 
 
-
 const uploadIPFS = async (formdata, paymaster, contractMetaNft, contractNFT, signer) => {
     const ContractNFT = contractMetaNft.connect(paymaster)
-    try {       
-        const ipfsImage = `ipfs://${data.IpfsHash}`;
-        const JsonURI = await uploadJsonMetadataIPFS("bb", 'ape', ipfsImage)
-
+    try {
+        console.log('잡아')
         const { data } = await axios.post("https://api.pinata.cloud/pinning/pinFileToIPFS", formdata, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -19,25 +16,25 @@ const uploadIPFS = async (formdata, paymaster, contractMetaNft, contractNFT, sig
                 pinata_secret_api_key
             }
         })
-
+        const ipfsImage = `ipfs://${data.IpfsHash}`;
+        const JsonURI = await uploadJsonMetadataIPFS("bb", 'ape', ipfsImage)
         if (!paymaster) {
             throw new Error('Signer is not available');
         }
-            
         const transaction = await ContractNFT.setTokenURI(JsonURI, signer.address);
         await transaction.wait();
         alert("ipfs 업로드 이후 민팅 완료");
+        try {
+            const ownerTokens = await ContractNFT.userTokens();
+            console.log('Owner tokens:', ownerTokens);
+        } catch (error) {
+            console.log('Error calling ownerToken:', error.message);
+        }
         return (`http://gateway.pinata.cloud/ipfs/${data.IpfsHash}`)
 
     } catch (error) {
         console.log('Error in uploadIPFS:', error);
         alert('Upload failed: ' + error);
-    }
-    try {
-        const ownerTokens = await ContractNFT.ownerToken();
-        console.log('Owner tokens:', ownerTokens);
-    } catch (error) {
-        console.log('Error calling ownerToken:', error.message);
     }
 }
 
@@ -91,9 +88,17 @@ const GetBTKcoin = async (signer, paymaster, contractMeta, contractCoin) => {
     return balance
 }
 
+const userBalance = async (signer, contractCoin) => {
+    const balance = await contractCoin.balanceOf(signer.address)
+    return balance
+}
+// const getOwnerNft
 
-const getOwnerNft
+const userNft = async (userAddress, contractNFT) => {
+    const NftInfo = await contractNFT.balanceOf(userAddress)
+    console.log(NftInfo, 'nftinfo')
+    return NftInfo;
+}
 
 
-
-export { uploadIPFS, GetBTKcoin } 
+export { uploadIPFS, GetBTKcoin, userBalance, userNft } 

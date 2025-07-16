@@ -11,8 +11,8 @@ const getWallets = async () => {
     console.log(data, "api2")
     return data
 }
-const createWallet = async (user) => {
-    const {data} = await axios.post('http://localhost:3001/wallet', {user})
+const createWallet = async (user, Userbalance) => {
+    const {data} = await axios.post('http://localhost:3001/wallet', {user, Userbalance})
     console.log(data, "3")
     return data
 }

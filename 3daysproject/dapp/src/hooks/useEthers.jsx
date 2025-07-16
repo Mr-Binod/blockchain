@@ -15,6 +15,10 @@ export const useEthers = (privatekeys, user) => {
     const [contractCoin, setContractCOIN] = useState(null)
     const [contractMetaNft, setContractMetaNft] = useState(null)
 
+//     DeployAllModule#BingNFT - 0x90B3E76c33D36248F68dD770A293E1A7396Ee76B
+// DeployAllModule#Bingtoken - 0x912F2F6E153052F86070E0eaE35e74FA933B2eAc
+// DeployAllModule#MetaBingNFT - 0x72eA302125c01e2459d06A54f6b61b220388bF16
+// DeployAllModule#MetaTransaction - 0x245A376aB4eADEF7216922C71B95E65616CdC893
 
  
     const BINGNFT = '0x4788338E5236904150BAb7A9C39843302E220Fd1'
@@ -31,11 +35,11 @@ export const useEthers = (privatekeys, user) => {
                     const provider = new ethers.JsonRpcProvider("https://sepolia.infura.io/v3/e7468d2d517b4aa28ba51a6e589558e2")
                     const promiseWallet = privatekeys.map(async (pk) => {
                         const wallet = new ethers.Wallet(pk, provider);
-                        const balance = await provider.getBalance(wallet.address)
-                        const balanceEth = ethers.formatEther(balance)
+                        // const balance = await provider.getBalance(wallet.address)
+                        // const balanceEth = ethers.formatEther(balance)
                         return {
                             wallet,
-                            balance: balanceEth,
+                            balance: wallet.balance,
                             address: wallet.address
                         }
                     })

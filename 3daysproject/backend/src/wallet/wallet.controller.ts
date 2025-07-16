@@ -6,11 +6,11 @@ import axios from 'axios';
 export class WalletController {
     constructor(private walletService : WalletService){}
     @Post("/wallet")
-    async createWallet(@Body() data : {user : string}){
-        const {user } = data;
+    async createWallet(@Body() data : {user : string, Userbalance : number}){
+        const {user, Userbalance } = data;
         const wallet = new WalletService()
         wallet.init(user);
-        await axios.post("http://localhost:3001/model", {wallet})
+        await axios.post("http://localhost:3001/model", {wallet, Userbalance})
         // console.log(data, wallet, "post")
         return wallet
     }

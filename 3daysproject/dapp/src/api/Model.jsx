@@ -12,5 +12,13 @@ const getUsers = async () => {
     return data
 }
 
+const Patchbalance = async (id, balance) => {
+    console.log(id, balance, 'ss1')
+    const {data} = await axios.patch('http://localhost:3001/model', {id, balance})
+    // console.log(data)
+    console.log(data, 'dsss')
+    return data
+}
 
-export {getUser, getUsers}
+
+export {getUser, getUsers, Patchbalance}

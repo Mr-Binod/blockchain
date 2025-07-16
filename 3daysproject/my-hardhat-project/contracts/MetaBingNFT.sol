@@ -120,24 +120,20 @@ contract MetaBingNFT {
     }
 
     // --- BingNFT state-changing function wrappers ---
-    function settokenURI(string memory newuri, address sender) external {
-        // Only allow the caller to mint for themselves
-        bingNFT.settokenURI(newuri, sender);
+    function settokenURI(string memory newuri) external {
+        bingNFT.settokenURI(newuri, msg.sender);
     }
 
-    function SellNFT(uint nftid, uint token, uint price, address sender) external {
-        // Only allow the caller to sell their own tokens
-        bingNFT.SellNFT(sender, nftid, token, price);
+    function SellNFT(uint nftid, uint token, uint price) external {
+        bingNFT.SellNFT(msg.sender, nftid, token, price);
     }
 
-    function BuyNft(uint nftid, address sender) external payable {
-        // Only allow the caller to buy for themselves
-        bingNFT.BuyNFT{value: msg.value}(nftid, sender);
+    function BuyNFT(uint nftid) external payable {
+        bingNFT.BuyNFT{value: msg.value}(nftid, msg.sender);
     }
 
-    function cancelSale(uint nftid, address sender) external {
-        // Only allow the caller to cancel their own sale
-        bingNFT.cancelSale(nftid, sender);
+    function cancelSale(uint nftid) external {
+        bingNFT.cancelSale(nftid, msg.sender);
     }
 
     // --- BingNFT view function wrappers ---
@@ -147,18 +143,6 @@ contract MetaBingNFT {
 
     function getall(uint item) external view returns(BingNFT.Sellstake memory) {
         return bingNFT.getall(item);
-    }
-
-    function ownerToken(address user) external view returns(BingNFT.Ownertokens[] memory) {
-        return bingNFT.ownerToken(user);
-    }
-
-    function getOwnerTokenCount(address user) external view returns(uint) {
-        return bingNFT.getOwnerTokenCount(user);
-    }
-
-    function getOwnerTokenAtIndex(address user, uint index) external view returns(BingNFT.Ownertokens memory) {
-        return bingNFT.getOwnerTokenAtIndex(user, index);
     }
 
     function getMintedTokens(address user) external view returns(uint[] memory tokenIds, uint[] memory amounts) {
@@ -171,5 +155,17 @@ contract MetaBingNFT {
 
     function getAllTokenBalances(address user) external view returns(uint[] memory tokenIds, uint[] memory balances) {
         return bingNFT.getAllTokenBalances(user);
+    }
+
+    function getOwnerTokenCount(address user) external view returns(uint) {
+        return bingNFT.getOwnerTokenCount(user);
+    }
+
+    function getOwnerTokenAtIndex(address user, uint index) external view returns(uint tokenId, uint amount) {
+        return bingNFT.getOwnerTokenAtIndex(user, index);
+    }
+
+    function userTokens(address user) external view returns(uint[] memory) {
+        return bingNFT.userTokens(user);
     }
 } 

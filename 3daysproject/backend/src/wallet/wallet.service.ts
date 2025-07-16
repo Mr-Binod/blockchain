@@ -29,7 +29,7 @@ export class WalletService implements IWallet {
         this.privateKey = this.setPrivateKey();
         this.publicKey = this.setPublicKey();
         this.account = this.setAccount();
-        this.balance = 100;
+        this.balance = 0;
         // if(privateKey === '') {
         //     WalletService.createWallet(this);
         // }

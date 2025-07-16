@@ -2,15 +2,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { createWallet, getWallet, getWallets } from '../../api/Wallet';
-import { getUser, getUsers } from '../../api/Model';
+import { getUser, getUsers, Patchbalance } from '../../api/Model';
 import { useEthers } from '../../hooks/useEthers';
 import {useDispatch, useSelector} from "react-redux"
-import  {uploadIPFS, GetBTKcoin } from '../../api/Contract';
+import  {uploadIPFS, GetBTKcoin, userBalance, userNft } from '../../api/Contract';
 
 const Mainpage = () => {
     const [userkeys, setUserkeys] = useState([])
     const [users, setUsers] = useState(null);
-    const [nfts, setNfts] = useState(["http://gateway.pinata.cloud/ipfs/QmeuPaDUPkWsYfSMb2yUztWNhFUTTvPaqns3H9UW4fcGGY"])
+    const [userbalance, setUserbalance] = useState(0);
+    const [nfts, setNfts] = useState([])
     const islogin = useSelector((state) => state.State)
     const userId = useSelector((state) => state.userId)  // ✅ Get from Redux
     const user = useSelector((state) => state.user)      // ✅ Get from Redux
@@ -23,7 +24,7 @@ const Mainpage = () => {
         queryKey: ["data"],
         queryFn: async () => {
             const wallets = await getUsers();
-
+            // const usernft = await userNft(signer.getAddress(), contractNFT )
             setUsers(wallets)
             const privateKeys = wallets.map((el) => el.privateKey);
             setUserkeys(privateKeys);
@@ -77,7 +78,6 @@ const Mainpage = () => {
         }
     })
 
-
     const loginHandler = (e) => {
         e.preventDefault();
         const { userid } = e.target;
@@ -93,7 +93,7 @@ const Mainpage = () => {
         const isUser = users && users.find((el) => el.user === signupid.value);
         if (isUser) return alert('이미 사용된 아이디입니다');
         dispatch({type: 'setUserId', payload: signupid.value})  // ✅ Set in Redux
-        createwalletMutn.mutate(signupid.value)
+        createwalletMutn.mutate(signupid.value, userbalance)
         signupid.value = "";
     }
     const LogoutHandler = () => {
@@ -107,7 +107,10 @@ const Mainpage = () => {
             data : 150
         }
         const sign = await signer.signMessage(JSON.stringify(txMessage));
-        const data = GetBTKcoin(signer, paymaster , contractMeta, contractCoin );
+        const data = await GetBTKcoin(signer, paymaster , contractMeta, contractCoin );
+        const newdata = Number(data)
+        const result = await Patchbalance(user.data.id, newdata)
+        setUserbalance(newdata)
     }
 
     useEffect(() => {
@@ -128,7 +131,7 @@ const Mainpage = () => {
     useEffect(() => {
         // console.log(users, 'users data')
         // console.log(userId, 'userId data')
-        // console.log(user, 'user data')
+        console.log(user, 'user data')
         // console.log(data, 'query data')
         // console.log(userkeys, 'userkeys data')
         // console.log(islogin, 'islogin data')
@@ -136,16 +139,19 @@ const Mainpage = () => {
         // console.log(nfts, 'nfts data')
         // console.log(pkprovider, provider, paymaster, 'providers data')
         if(!contractNFT) return;
-        (async () => {
-
-            //  console.log(await contractNFT.ownerToken(), 'ownertoken')
-        })()
 
     }, [users, data, userkeys, islogin, signer, pkprovider, provider, paymaster, user])
 
-    
-    
-     
+    useEffect(() => {
+        if(!contractNFT) return;
+        (async () => {
+            const result = await userBalance(signer, contractCoin)
+            console.log(typeof(result))
+            const newResult = Number(result);
+            setUserbalance(newResult);
+            console.log(newResult, userbalance)
+        })()
+    },[contractNFT])
 
     if (isLoading) return <>...loading</>
     return (
@@ -165,6 +171,12 @@ const Mainpage = () => {
             {/* Display Users */}
             {islogin && <div>
 
+                <h3>User 정보</h3>
+                {user ? <ul>
+                    <li>user 계정 : {user.data.account} </li>
+                    <li>user 공개키 : {user.data.publicKey}</li>
+                    <li>user 잔액 : {userbalance}</li>
+                </ul> : ""}
                 <h3>Get Bing Token</h3>
                 <button onClick={getBTKcoin} >Getcoin</button>
                 <h3>uploadNFT</h3>
@@ -174,7 +186,7 @@ const Mainpage = () => {
                 </form>
                 <h3>NFTs:</h3>
                 <img src="http://gateway.pinata.cloud/ipfs/QmeuPaDUPkWsYfSMb2yUztWNhFUTTvPaqns3H9UW4fcGGY"/>
-                {nfts?.map((el, i) => <img key={i} src={el}/>)}
+                {nfts?.map((el, i) => <div> <img key={i} src={el[i].image}/> <div>nft balance :{el[i].nftbalance}</div></div>)}
                 <h3>Users:</h3>
                 {users && users.length > 0 ? (
                     <ul>

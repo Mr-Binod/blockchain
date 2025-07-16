@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ModelService } from './model.service';
 import { IWallet } from 'src/wallet/wallet.interface';
+import { where } from 'sequelize';
 
 
 @Controller()
@@ -8,11 +9,12 @@ export class ModelController {
     constructor(private readonly modelService: ModelService) { }
 
     @Post('model')
-    async createUser(@Body() body: { wallet: IWallet }) {
-        const { wallet } = body;
-        const { user, account, balance, privateKey, publicKey } = wallet;
-        console.log(wallet, 'model', user, account, balance, privateKey, publicKey)
-        return await this.modelService.createUser(user, account, balance, privateKey, publicKey)
+    async createUser(@Body() body: { wallet: IWallet, Userbalance : number }) {
+        const { wallet, Userbalance } = body;
+        const { user, account, privateKey, publicKey } = wallet;
+        console.log(wallet, 'model', user, account,  privateKey, publicKey)
+        // const balance = Userbalance;
+        return await this.modelService.createUser(user, account, Userbalance, privateKey, publicKey)
     }
 
     @Get("model/:id")
@@ -25,4 +27,10 @@ export class ModelController {
         return await this.modelService.getAllusers();
     }
     
+    @Patch('model')
+    async patchBalance(@Body() body : {id : number, balance : number}) {
+        const {balance, id} = body;
+        console.log(body, '1111')
+        return await this.modelService.Update( id, balance)
+    }
 }

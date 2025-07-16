@@ -50,4 +50,13 @@ export class ModelService {
             console.log(isError)
         }
     }
+
+    async Update(id : number, balance: number) {
+        try {
+            const data = await this.userModel.update({balance}, {where : {id}})
+            return data
+        } catch (error) {
+            return error
+        }
+    }
 }
